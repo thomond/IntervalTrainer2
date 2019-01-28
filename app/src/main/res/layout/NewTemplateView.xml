@@ -12,5 +12,5 @@
         android:layout_height="495dp"
         tools:layout_editor_absoluteX="8dp"
         tools:layout_editor_absoluteY="8dp"
-        tools:listitem="@layout/SavedSessionView_recyclerview_item"  />
+        tools:listitem="@layout/NewTemplateView_recyclerview_item"  />
 </android.support.constraint.ConstraintLayout>

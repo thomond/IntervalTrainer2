@@ -11,7 +11,7 @@ import android.widget.TextView;
 import java.util.Collections;
 import java.util.List;
 
-public class SessionListAdapter extends RecyclerView.Adapter<SessionListAdapter.SessionViewHolder> {
+public class NewTemplateAdapter extends RecyclerView.Adapter<NewTemplateAdapter.SessionViewHolder> {
     private final LayoutInflater mLayoutInflater;
     private List<Session> mSessions = Collections.emptyList();
     private List<IntervalData> mIntervalData = Collections.emptyList();
@@ -37,7 +37,7 @@ public class SessionListAdapter extends RecyclerView.Adapter<SessionListAdapter.
         }
     }
 
-    public SessionListAdapter(Context mContext) {
+    public NewTemplateAdapter(Context mContext) {
         mLayoutInflater = LayoutInflater.from(mContext);
     }
 
