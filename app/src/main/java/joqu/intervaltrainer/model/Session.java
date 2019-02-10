@@ -1,4 +1,4 @@
-package joqu.intervaltrainer;
+package joqu.intervaltrainer.model;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
@@ -10,13 +10,13 @@ import android.support.annotation.NonNull;
 public class Session {
     @PrimaryKey(autoGenerate = true)
     @NonNull
-    int id;
+    public int id;
     @ColumnInfo(name = "template_id")
     @NonNull
-    int templateId;
-    String started;
-    String ended;
-    String data;
+    public int templateId;
+    public String started;
+    public String ended;
+    public String data;
     public Session(int templateId,String started, String ended, String data){
         this.templateId = templateId;
         this.started = started;

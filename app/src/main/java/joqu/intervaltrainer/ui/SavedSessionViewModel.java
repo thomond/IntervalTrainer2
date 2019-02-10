@@ -1,4 +1,4 @@
-package joqu.intervaltrainer;
+package joqu.intervaltrainer.ui;
 
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
@@ -7,34 +7,35 @@ import android.support.annotation.NonNull;
 
 import java.util.List;
 
+import joqu.intervaltrainer.model.AppDao;
+import joqu.intervaltrainer.model.AppDatabase;
+import joqu.intervaltrainer.model.IntervalData;
+import joqu.intervaltrainer.model.Session;
 
-public class NewTemplateViewModel extends AndroidViewModel {
-    SessionDao mSessionDao;
-    private LiveData<List<Session>> mSessions;
-    IntervalDataDao mIntervalDataDao;
+
+public class SavedSessionViewModel extends AndroidViewModel {
+    AppDao mDao;
+    private Session mSession;
     private LiveData<List<IntervalData>> mIntervalData;
 
-    public NewTemplateViewModel(@NonNull Application application, int mSessionId) {
+    public SavedSessionViewModel(@NonNull Application application, int mSessionId) {
         super(application);
         // Get an instance of the App Database
         AppDatabase mDB = AppDatabase.GetDB(application.getApplicationContext());
         // Aquire a DAO instance from the database and retrieve all sessions present etc.
-        mSessionDao = mDB.sessionDao();
-        mSessions = mSessionDao.getAllSessions();
-
-        // Aquire a DAO instance from the database and retrieve all IntervalDatas present etc.
-        mIntervalDataDao = mDB.IntervalDataDao();
-        mIntervalData = mIntervalDataDao.getIntervalDataBySessionId(mSessionId);
+        mDao = mDB.appDao();
+        mSession = mDao.getSessionById(mSessionId);
+        mIntervalData = mDao.getIntervalDataBySessionId(mSessionId);
 
     }
 
 
-    public LiveData<List<Session>> getSessions() {
-        return mSessions;
+    public Session getSession() {
+        return mSession;
     }
 
     public void saveSession(Session session) {
-        new AppDatabase.InsertAsyncTask(mSessionDao).execute(session);
+        new AppDatabase.InsertAsyncTask(mDao).execute(session);
     }
 
     public LiveData<List<IntervalData>> getIntervalData() {

@@ -3,12 +3,14 @@ package joqu.intervaltrainer;
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
-import android.text.PrecomputedText;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.List;
+
+import joqu.intervaltrainer.model.AppDatabase;
+import joqu.intervaltrainer.model.Session;
 
 import static org.junit.Assert.*;
 
@@ -36,7 +38,7 @@ public class ExampleInstrumentedTest {
         // Get an instance of the App Database
         AppDatabase mDB = AppDatabase.GetDB(appContext);
         // Aquire a DAO instance from the database and retrieve all sessions present etc.
-        SessionDao mSessionDao = mDB.sessionDao();
+        SessionDao mSessionDao = mDB.appDao();
         new AppDatabase.InsertAsyncTask(mSessionDao).execute(new Session(0,"20180101","20190101","this is a test"));
         Thread.sleep(1000);
         List<Session> mSessions = mSessionDao.getAllSessions();

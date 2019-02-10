@@ -1,4 +1,4 @@
-package joqu.intervaltrainer;
+package joqu.intervaltrainer.model;
 
 
 import android.arch.persistence.db.SupportSQLiteDatabase;
@@ -8,24 +8,19 @@ import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
-import android.text.method.DateTimeKeyListener;
 import android.util.Log;
-
-import java.sql.Time;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 import static android.content.ContentValues.TAG;
 
 // Set the entity (table) names and versions number
-@Database(entities = {Session.class, IntervalData.class}, version = 1)
+@Database(entities = {Session.class, IntervalData.class, Template.class, Interval.class}, version = 1)
 public abstract class AppDatabase extends RoomDatabase
 {
     private static volatile AppDatabase DB = null;
     private static String DBName = "DEBUG";
     // Retrive DAO for entities
-    public abstract SessionDao sessionDao();
-    public abstract IntervalDataDao IntervalDataDao();
+    public abstract AppDao appDao();
+    //public abstract IntervalDataDao IntervalDataDao();
     // Singleton func to get DB or create if it doesn't exist
     public static AppDatabase GetDB(final Context context ){
         if (DB == null){
@@ -58,16 +53,19 @@ public abstract class AppDatabase extends RoomDatabase
     // TODO: check if tables already exist/ are populated
     public static class PopulateAppDbAsyncTask extends AsyncTask<Void, Void, Void> {
 
-        SessionDao mDAO;
+        AppDao mDAO;
         public PopulateAppDbAsyncTask(AppDatabase DB) {
-            mDAO = DB.sessionDao();
+            mDAO = DB.appDao();
         }
 
         @Override
         protected Void doInBackground(final Void... params) {
 
-            mDAO.deleteAll();
-            mDAO.addSession(new Session(0,"20190101 00:00","20190101 00:01","test, test"));
+           // mDAO.deleteSessions();
+            Session mSess = new Session(0,"20190101 00:00","20190101 00:01","test, test");
+            mDAO.addSession(mSess);
+            mDAO.addIntervalData(new IntervalData(0,mSess.id,"test"));
+
             return null;
         }
     }
@@ -77,8 +75,8 @@ public abstract class AppDatabase extends RoomDatabase
 
     public  static class InsertAsyncTask extends AsyncTask<Session, Void, Long> {
 
-        SessionDao mDAO;
-        public InsertAsyncTask(SessionDao mDAO) {
+        AppDao mDAO;
+        public InsertAsyncTask(AppDao mDAO) {
             mDAO = mDAO;
         }
 
