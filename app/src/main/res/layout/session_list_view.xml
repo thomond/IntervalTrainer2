@@ -7,13 +7,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
-
     <!-- Layout to contain contents of main body of screen (drawer will slide over this) -->
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-
         <android.support.v7.widget.Toolbar android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
@@ -21,37 +19,14 @@
             android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
             xmlns:android="http://schemas.android.com/apk/res/android" />
 
-        <TextView
-            android:id="@+id/sessionItem_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="" />
-
-
-        <TextView
-            android:id="@+id/sessionItem_started"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Started: " />
-
-        <TextView
-            android:id="@+id/sessionItem_ended"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Ended: " />
-        <TextView
-            android:id="@+id/sessionItem_data"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Data: " />
-
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/intervalDataView"
+            android:id="@+id/sessionListRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:listitem="@layout/interval_data_view" />
+            tools:listitem="@layout/session_list_recycler" />
 
-    </LinearLayout>
+
+    </FrameLayout>
 
     <!-- Container for contents of drawer - use NavigationView to make configuration easier -->
     <android.support.design.widget.NavigationView

@@ -12,12 +12,13 @@ import java.util.Collections;
 import java.util.List;
 
 import joqu.intervaltrainer.R;
+import joqu.intervaltrainer.model.Interval;
 import joqu.intervaltrainer.model.IntervalData;
 
 public class IntervalDataAdapter extends RecyclerView.Adapter<IntervalDataAdapter.IntervalDataViewHolder> {
     private final LayoutInflater mLayoutInflater;
     private List<IntervalData> mIntervalData = Collections.emptyList();
-
+    private List<Interval> mIntervalTypes = Collections.emptyList();
     public class IntervalDataViewHolder extends RecyclerView.ViewHolder {
         // Interval related items
         private final TextView dataText;

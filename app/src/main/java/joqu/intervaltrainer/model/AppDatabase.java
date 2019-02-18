@@ -10,6 +10,10 @@ import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import java.util.Collections;
+import java.util.IllegalFormatException;
+import java.util.List;
+
 import static android.content.ContentValues.TAG;
 
 // Set the entity (table) names and versions number
@@ -35,6 +39,22 @@ public abstract class AppDatabase extends RoomDatabase
         return DB;
     }
 
+    public static AppDatabase GetMemDB(final Context context ){
+        if (DB == null){
+            synchronized (AppDatabase.class){
+                if (DB == null){
+                    if (DBName=="DEBUG") {
+                        context.deleteDatabase(DBName);
+                        DB = Room.inMemoryDatabaseBuilder(context.getApplicationContext(), AppDatabase.class).addCallback(mAppDatabaseCallback).build();
+                    }else
+                        DB = Room.databaseBuilder(context.getApplicationContext(),AppDatabase.class,DBName).addCallback(mAppDatabaseCallback).build();
+
+                }
+            }
+        }
+        return DB;
+    }
+
     // onOpen callback for database
     private static Callback
         mAppDatabaseCallback = new Callback() {
@@ -42,6 +62,7 @@ public abstract class AppDatabase extends RoomDatabase
             @Override
             public void onOpen(@NonNull SupportSQLiteDatabase db) {
                 super.onOpen(db);
+
                 new PopulateAppDbAsyncTask(DB).execute();
             }
         };
@@ -60,11 +81,20 @@ public abstract class AppDatabase extends RoomDatabase
 
         @Override
         protected Void doInBackground(final Void... params) {
+            if (DBName=="DEBUG"){
+                DB.clearAllTables();
 
-           // mDAO.deleteSessions();
-            Session mSess = new Session(0,"20190101 00:00","20190101 00:01","test, test");
-            mDAO.addSession(mSess);
-            mDAO.addIntervalData(new IntervalData(0,mSess.id,"test"));
+                // mDAO.deleteSessions();
+                Session mSess = new Session(1,0,"20190101 00:00","20190101 00:01","test, test");
+
+                mDAO.addSession(mSess);
+                for (int i=0;i<5;i++)
+                {
+                    mDAO.addIntervalData(new IntervalData(i,0,mSess.id,"test "+i));
+                }
+
+            }
+
 
             return null;
         }
@@ -73,23 +103,61 @@ public abstract class AppDatabase extends RoomDatabase
 
     // async task for inserts into the DB
 
-    public  static class InsertAsyncTask extends AsyncTask<Session, Void, Long> {
+    public  static class InsertAsyncTask extends AsyncTask<Object, Void, Long> {
 
         AppDao mDAO;
+
         public InsertAsyncTask(AppDao mDAO) {
-            mDAO = mDAO;
+            this.mDAO = mDAO;
         }
 
         @Override
-        protected Long doInBackground(final Session... params) {
+        protected Long doInBackground(final Object... params) {
             long rows = 0;
             try {
-                rows =  mDAO.addSession(params[0]);
-            }catch( NullPointerException e){
-                Log.e(TAG, "doInBackground: params is NULL");
+                if (params[0] instanceof Session)
+                    rows = mDAO.addSession((Session)params[0]);
+                else if (params[0] instanceof Template)
+                    rows = mDAO.addTemplate((Template)params[0]);
+                else if (params[0] instanceof Interval)
+                    rows = mDAO.addInterval((Interval)params[0]);
+                else if (params[0] instanceof IntervalData)
+                    rows = mDAO.addIntervalData((IntervalData)params[0]);
+                else return new Long(-1);
+            } catch (NullPointerException e) {
+                Log.e(TAG, "InsertAsyncTask.doInBackground: params is NULL");
             }
             return rows;
         }
     }
 
+    // async task for inserts into the DB
+
+    public  static class SelectAsyncTask extends AsyncTask<Object, Void, List> {
+
+        AppDao mDAO;
+
+        public SelectAsyncTask(AppDao mDAO) {
+            this.mDAO = mDAO;
+        }
+
+        @Override
+        protected List doInBackground(final Object... params) {
+
+            try {
+                if (params[0] == Session.class)
+                    return mDAO.getAllSessions();
+                else if (params[0] == Template.class)
+                    return mDAO.getAllTemplates();
+                else if (params[0] == Interval.class)
+                    return mDAO.getAllIntervals();
+                else if (params[0] == IntervalData.class)
+                    return mDAO.getAllIntervalData();
+                else return Collections.emptyList();
+            } catch (NullPointerException e) {
+                Log.e(TAG, "SelectAsyncTask.doInBackground: params is NULL");
+            }
+            return Collections.emptyList();
+        }
+    }
 }

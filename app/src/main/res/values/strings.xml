@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Interval Trainer</string>
+    <string name="new_session">Start New Session</string>
+    <string name="new_template">Create New Templste</string>
+    <string name="saved_sessions">Saved Sessions</string>
+    <string name="saved_templates">Templates</string>
 </resources>
