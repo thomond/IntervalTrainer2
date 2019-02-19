@@ -41,7 +41,7 @@ public class TemplateListAdapter extends RecyclerView.Adapter<TemplateListAdapte
     @Override
     public TemplateListHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         // Get  recycler
-        View itemView = mLayoutInflater.inflate(R.layout.template_list_recycler, viewGroup, false);
+        View itemView = mLayoutInflater.inflate(R.layout.recycler_template_list, viewGroup, false);
         return new TemplateListHolder(itemView);
     }
 

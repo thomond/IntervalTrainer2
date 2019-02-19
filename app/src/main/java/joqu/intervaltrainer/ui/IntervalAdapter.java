@@ -6,7 +6,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import java.util.Collections;
 import java.util.List;
@@ -42,7 +41,7 @@ public class IntervalAdapter extends RecyclerView.Adapter<IntervalAdapter.Interv
     @Override
     public IntervalListHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         // Get interval list recycler
-        View itemView = mLayoutInflater.inflate(R.layout.interval_data_view, viewGroup, false);
+        View itemView = mLayoutInflater.inflate(R.layout.recycler_interval_data, viewGroup, false);
         return new IntervalListHolder(itemView);
     }
 

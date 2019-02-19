@@ -84,6 +84,14 @@ public abstract class AppDatabase extends RoomDatabase
             if (DBName=="DEBUG"){
                 DB.clearAllTables();
 
+                Template mTem = new Template(1,"Test Template","test","Test Template");
+                mDAO.addTemplate(mTem);
+                for (int i=0;i<5;i++)
+                {
+                    mDAO.addInterval(new Interval(0,"",mTem.id));
+                }
+
+
                 // mDAO.deleteSessions();
                 Session mSess = new Session(1,0,"20190101 00:00","20190101 00:01","test, test");
 

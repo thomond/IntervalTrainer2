@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.SessionListFragment">
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:minHeight="0dp">
+
+   <android.support.v7.widget.RecyclerView
+       android:id="@+id/sessionListRecyclerView"
+       android:layout_width="match_parent"
+       android:layout_height="match_parent"
+       android:visibility="visible"
+       tools:listitem="@layout/recycler_session_list" />
+
+   <LinearLayout
+       android:id="@+id/ViewSavedSession"
+       android:layout_width="match_parent"
+       android:layout_height="match_parent"
+       android:orientation="vertical"
+       android:visibility="invisible">
+
+       <TextView
+           android:id="@+id/sessionItem_name"
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:text="" />
+
+
+       <TextView
+           android:id="@+id/sessionItem_started"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:text="Started: " />
+
+       <TextView
+           android:id="@+id/sessionItem_ended"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:text="Ended: " />
+
+       <TextView
+           android:id="@+id/sessionItem_data"
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:text="Data: " />
+
+       <android.support.v7.widget.RecyclerView
+           android:id="@+id/intervalDataView"
+           android:layout_width="match_parent"
+           android:layout_height="match_parent"
+           tools:listitem="@layout/recycler_interval_data" />
+
+   </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>
+
+<!-- Layout to contain Saved Session info taken from session list-->
+</FrameLayout>
+
+

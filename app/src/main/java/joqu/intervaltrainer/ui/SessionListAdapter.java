@@ -6,7 +6,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.TextView;
 
 import java.util.Collections;
@@ -62,7 +61,7 @@ public class SessionListAdapter extends RecyclerView.Adapter<SessionListAdapter.
     @Override
     public SessionListHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         // Get session list recycler
-        View itemView = mLayoutInflater.inflate(R.layout.session_list_recycler, viewGroup, false);
+        View itemView = mLayoutInflater.inflate(R.layout.recycler_session_list, viewGroup, false);
         return new SessionListHolder(itemView);
     }
 

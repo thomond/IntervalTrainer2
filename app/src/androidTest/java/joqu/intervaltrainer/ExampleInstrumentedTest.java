@@ -1,7 +1,5 @@
 package joqu.intervaltrainer;
 
-import android.app.Application;
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
@@ -11,15 +9,12 @@ import org.junit.runner.RunWith;
 
 import java.util.List;
 
-import javax.xml.transform.Templates;
-
 import joqu.intervaltrainer.model.AppDao;
 import joqu.intervaltrainer.model.AppDatabase;
 import joqu.intervaltrainer.model.Interval;
 import joqu.intervaltrainer.model.IntervalData;
 import joqu.intervaltrainer.model.Session;
 import joqu.intervaltrainer.model.Template;
-import joqu.intervaltrainer.ui.SavedSessionViewModel;
 
 import static org.junit.Assert.*;
 

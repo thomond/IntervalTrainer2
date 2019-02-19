@@ -21,14 +21,14 @@ import joqu.intervaltrainer.model.Template;
 import static android.content.ContentValues.TAG;
 
 
-public class SavedSessionViewModel extends AndroidViewModel {
+public class AppViewModel extends AndroidViewModel {
     AppDao mDao;
     private List<Session> mSessions;
     private List<Template> mTemplates;
     private List<IntervalData> mIntervalData;
     private List<Interval> mIntervals;
 
-    public SavedSessionViewModel(@NonNull Application application) {
+    public AppViewModel(@NonNull Application application) {
         super(application);
         // Get an instance of the App Database
         AppDatabase mDB = AppDatabase.GetDB(application.getApplicationContext());
