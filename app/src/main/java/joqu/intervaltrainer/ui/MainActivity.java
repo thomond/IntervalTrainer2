@@ -53,12 +53,12 @@ public class MainActivity extends AppCompatActivity {
 
                         // Add code here to update the UI based on the item selected
                         // For example, swap UI fragments here
-                        if (menuItem.getItemId() == R.id.nav_item_new_session  )
-                            return true;
-                        else if (menuItem.getItemId() == R.id.nav_item_saved_session  )
-                            showSessionList(mSessionViewModel);
+                        if (menuItem.getItemId() == R.id.nav_item_saved_session  )
+                            showSessionList();
                         else if (menuItem.getItemId() == R.id.nav_item_saved_template  )
-                            showTemplateList(mSessionViewModel);
+                            showTemplateList();
+                        else if (menuItem.getItemId() == R.id.nav_item_new_session  )
+                            showLiveSession();
                         //else if (menuItem.getItemId() == R.id.nav_item_new_session  )
                         //    return true;
                         return true;
@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
         //actionbar.setHomeAsUpIndicator(R.drawable.ic_launcher_background);
     }
 
-    protected void showSessionList(final AppViewModel mViewModel )
+    protected void showSessionList( )
     {
         // Begin fragment trasaction and replace content frame with session list fragment
         SessionListFragment mFrag = SessionListFragment.newInstance();
@@ -102,10 +102,22 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    protected void showTemplateList(AppViewModel mViewModel )
+    protected void showTemplateList()
     {
         // Begin fragment trasaction and replace content frame with session list fragment
        TemplateFragment mFrag = TemplateFragment.newInstance();
+        FragmentManager mFragManager = getSupportFragmentManager();
+        FragmentTransaction mFragTransaction = mFragManager.beginTransaction();
+
+        mFragTransaction.replace(R.id.mainContentFrame,mFrag);
+
+        mFragTransaction.commit();
+    }
+
+    protected void showLiveSession()
+    {
+        // Begin fragment trasaction and replace content frame with session  fragment
+        LiveSessionFragment mFrag = LiveSessionFragment.newInstance();
         FragmentManager mFragManager = getSupportFragmentManager();
         FragmentTransaction mFragTransaction = mFragManager.beginTransaction();
 

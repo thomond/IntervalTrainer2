@@ -4,7 +4,8 @@
     <string name="new_template">Create New Templste</string>
     <string name="saved_sessions">Saved Sessions</string>
     <string name="saved_templates">Templates</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="INTENT_EXTRA_template_id">template_id</string>
+    <string name="BROADCAST_COUNTDOWN_UPDATE">joqu.intervaltrainer.COUNTDOWN_UPDATE</string>
+    <string name="BROADCAST_COUNTDOWN_DONE">joqu.intervaltrainer.BROADCAST_COUNTDOWN_DONE</string>
+    <string name="BROADCAST_GPS_UPDATE">GPS_UPDATE</string>
 </resources>

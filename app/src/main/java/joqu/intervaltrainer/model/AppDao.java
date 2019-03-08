@@ -61,6 +61,10 @@ public interface AppDao
     @Query("select * from interval where id=:id")
     public Interval getIntervalById(int id);
 
+    ////// Interval access /////
+    @Query("select * from interval where template_id=:id")
+    public List<Interval> getIntervalsTemplateById(int id);
+
     @Query("select type from interval where :id=id")
     public int getTypeById(int id);
 

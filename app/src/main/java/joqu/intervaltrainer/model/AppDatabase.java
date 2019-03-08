@@ -5,6 +5,7 @@ import android.arch.persistence.db.SupportSQLiteDatabase;
 import android.arch.persistence.room.Database;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
+import android.content.ContentValues;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
@@ -13,15 +14,20 @@ import android.util.Log;
 import java.util.Collections;
 import java.util.IllegalFormatException;
 import java.util.List;
+import java.util.Random;
 
-import static android.content.ContentValues.TAG;
+import joqu.intervaltrainer.BuildConfig;
+import joqu.intervaltrainer.Const;
+
+
+
 
 // Set the entity (table) names and versions number
 @Database(entities = {Session.class, IntervalData.class, Template.class, Interval.class}, version = 1)
 public abstract class AppDatabase extends RoomDatabase
 {
     private static volatile AppDatabase DB = null;
-    private static String DBName = "DEBUG";
+    private static String DBName = "IntervalTrainer";
     // Retrive DAO for entities
     public abstract AppDao appDao();
     //public abstract IntervalDataDao IntervalDataDao();
@@ -29,29 +35,14 @@ public abstract class AppDatabase extends RoomDatabase
     public static AppDatabase GetDB(final Context context ){
         if (DB == null){
             synchronized (AppDatabase.class){
-                if (DB == null){
-
-                    DB = Room.databaseBuilder(context.getApplicationContext(), AppDatabase.class, DBName).addCallback(mAppDatabaseCallback).build();
-
-                }
-            }
-        }
-        return DB;
-    }
-
-    public static AppDatabase GetMemDB(final Context context ){
-        if (DB == null){
-            synchronized (AppDatabase.class){
-                if (DB == null){
-                    if (DBName=="DEBUG") {
+                    if (BuildConfig.DEBUG) {
                         context.deleteDatabase(DBName);
                         DB = Room.inMemoryDatabaseBuilder(context.getApplicationContext(), AppDatabase.class).addCallback(mAppDatabaseCallback).build();
-                    }else
-                        DB = Room.databaseBuilder(context.getApplicationContext(),AppDatabase.class,DBName).addCallback(mAppDatabaseCallback).build();
-
+                    }
+                    else
+                        DB = Room.databaseBuilder(context.getApplicationContext(), AppDatabase.class, DBName).addCallback(mAppDatabaseCallback).build();
                 }
             }
-        }
         return DB;
     }
 
@@ -63,7 +54,7 @@ public abstract class AppDatabase extends RoomDatabase
             public void onOpen(@NonNull SupportSQLiteDatabase db) {
                 super.onOpen(db);
 
-                new PopulateAppDbAsyncTask(DB).execute();
+
             }
         };
 
@@ -81,24 +72,29 @@ public abstract class AppDatabase extends RoomDatabase
 
         @Override
         protected Void doInBackground(final Void... params) {
-            if (DBName=="DEBUG"){
+            if (BuildConfig.DEBUG) {
                 DB.clearAllTables();
 
-                Template mTem = new Template(1,"Test Template","test","Test Template");
+                Template mTem = new Template("Test Template","test","Test Template");
+                Log.i(Const.TAG, mTem.hashCode()+ " added");
                 mDAO.addTemplate(mTem);
                 for (int i=0;i<5;i++)
                 {
-                    mDAO.addInterval(new Interval(0,"",mTem.id));
+                    long rand = new Random().nextInt(60)*1000;
+                    Interval interval = new Interval(0,""+rand,1,i);
+                    mDAO.addInterval(interval);
+                    Log.i(Const.TAG, "Interval"+ i +" added: "+ interval.toString());
                 }
 
 
                 // mDAO.deleteSessions();
-                Session mSess = new Session(1,0,"20190101 00:00","20190101 00:01","test, test");
-
+                Session mSess = new Session(0,"20190101 00:00","20190101 00:01","test, test");
+                Log.i(Const.TAG, mSess.hashCode()+ " added");
                 mDAO.addSession(mSess);
                 for (int i=0;i<5;i++)
                 {
-                    mDAO.addIntervalData(new IntervalData(i,0,mSess.id,"test "+i));
+                    mDAO.addIntervalData(new IntervalData(0,1,"test "+i));
+                    Log.i(Const.TAG, i + " IntervalData added");
                 }
 
             }
@@ -133,7 +129,7 @@ public abstract class AppDatabase extends RoomDatabase
                     rows = mDAO.addIntervalData((IntervalData)params[0]);
                 else return new Long(-1);
             } catch (NullPointerException e) {
-                Log.e(TAG, "InsertAsyncTask.doInBackground: params is NULL");
+                Log.e(Const.TAG, "InsertAsyncTask.doInBackground: params is NULL");
             }
             return rows;
         }
@@ -163,9 +159,11 @@ public abstract class AppDatabase extends RoomDatabase
                     return mDAO.getAllIntervalData();
                 else return Collections.emptyList();
             } catch (NullPointerException e) {
-                Log.e(TAG, "SelectAsyncTask.doInBackground: params is NULL");
+                Log.e(Const.TAG, "SelectAsyncTask.doInBackground: params is NULL");
             }
             return Collections.emptyList();
         }
     }
+
+
 }

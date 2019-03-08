@@ -1,13 +1,21 @@
 package joqu.intervaltrainer;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
+import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.List;
+import java.util.Random;
 
 import joqu.intervaltrainer.model.AppDao;
 import joqu.intervaltrainer.model.AppDatabase;
@@ -37,7 +45,7 @@ public class ExampleInstrumentedTest {
     public void insertTest() throws InterruptedException {
         Context appContext = InstrumentationRegistry.getTargetContext();
         // Get an instance of the App Database
-        AppDatabase mDB = AppDatabase.GetMemDB(appContext);
+        AppDatabase mDB = AppDatabase.GetDB(appContext);
         // Aquire a DAO instance from the database and retrieve all sessions present etc.
         AppDao mAppDao = mDB.appDao();
         new AppDatabase.InsertAsyncTask(mAppDao).execute(new Session(0,"20180101","20190102","this is a test"));
@@ -48,11 +56,11 @@ public class ExampleInstrumentedTest {
         }
 
 
-        new AppDatabase.InsertAsyncTask(mAppDao).execute(new Template(0,"Template 1","Example Template"));
+        new AppDatabase.InsertAsyncTask(mAppDao).execute(new Template(0,"Template","Template 1","Example Template"));
 
         for (int i=0;i<5;i++)
         {
-            new AppDatabase.InsertAsyncTask(mAppDao).execute(new Interval(0,"20;minutes",0));
+            new AppDatabase.InsertAsyncTask(mAppDao).execute(new Interval(0,"20;minutes",0,i));
         }
 
         Thread.sleep(1000);
@@ -71,9 +79,13 @@ public class ExampleInstrumentedTest {
         assertEquals("joqu.intervaltrainer", appContext.getPackageName());
 
         // Get an instance of the App Database
-        AppDatabase mDB = AppDatabase.GetMemDB(appContext);
+        AppDatabase mDB = AppDatabase.GetDB(appContext);
+        new AppDatabase.PopulateAppDbAsyncTask(mDB).execute();
         // Aquire a DAO instance from the database and retrieve all sessions present etc.
         AppDao mAppDao = mDB.appDao();
+
+        // Wait for possibly a little time for the test to be written
+        //Thread.sleep(6000);
 
         List<Session> mSessions = mAppDao.getAllSessions();
         List<IntervalData> mData = mAppDao.getAllIntervalData();
@@ -81,4 +93,111 @@ public class ExampleInstrumentedTest {
         List<Interval> mIntervalTypes = mAppDao.getAllIntervals();
     }
 
+
+    @Test
+    public void CountdownServiceTest(){
+        // Context of the app under test.
+        Context appContext = InstrumentationRegistry.getTargetContext();
+        Intent intent = new Intent(appContext, LiveSessionService.class);
+        BroadcastReceiver mReceiver;
+        // Get an instance of the App Database
+        final AppDatabase mDB = AppDatabase.GetDB(appContext);
+
+        new AsyncTask() {
+            @Override
+            protected Void doInBackground(Object... objects) {
+                mDB.clearAllTables();
+
+                Template mTem = new Template("Test Template", "test", "Test Template");
+                Log.i(Const.TAG, mTem.hashCode() + " added");
+                mDB.appDao().addTemplate(mTem);
+                for (int i = 0; i < 5; i++) {
+                    long rand = new Random().nextInt(10) * 1000;
+                    Interval interval = new Interval(0, "" + rand, 1, i);
+                    mDB.appDao().addInterval(interval);
+                    Log.i(Const.TAG, "Interval" + i + " added: " + interval.toString());
+                }
+
+                return null;
+            }
+        }.execute();
+
+        // Fill the intent with the temp id and start the service
+        intent.putExtra(Const.INTENT_EXTRA_TEMPLATE_ID_INT,1);
+        intent.putExtra(Const.INTENT_EXTRA_DO_GPS_BOOL, false);
+        // Start service
+        if (Build.VERSION.SDK_INT >= 26) {
+            // Start in foreground; id: non-zro identifier, Notification object to show in taskbar
+            appContext.startForegroundService(intent);
+        }else
+            appContext.startService(intent);
+
+
+        // set up BroadcastReciever  to updates from service
+        mReceiver = new BroadcastReceiver() {
+            int timersDone=0;
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String action = intent.getAction();
+                if (action == Const.BROADCAST_COUNTDOWN_UPDATE) {
+                    long value;
+                    value = intent.getLongExtra("millisUntilFinished", 0);
+                    Log.i(context.getString(R.string.app_name),String.valueOf(value/1000)+" seconds.");
+                }else if (action == Const.BROADCAST_COUNTDOWN_DONE){
+                   timersDone++;
+                   if (timersDone==4) assertTrue(true); // Succeed test if five timers finished
+
+                }
+            }
+        };
+
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(Const.BROADCAST_COUNTDOWN_UPDATE);
+        intentFilter.addAction(Const.BROADCAST_COUNTDOWN_DONE);
+        LocalBroadcastManager.getInstance(appContext).registerReceiver(mReceiver,intentFilter);
+
+        try {
+            Thread.sleep(300000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        assertTrue(false);// Fail if timer ends
+
+        // Unregister whn no longer needed
+        LocalBroadcastManager.getInstance(appContext).unregisterReceiver(mReceiver);
+
+    }
+
+    @Test
+    public void ServiceTest(){
+        // Context of the app under test.
+        Context appContext = InstrumentationRegistry.getTargetContext();
+        Intent intent = new Intent(appContext, LiveSessionService.class);
+
+        BroadcastReceiver mReceiver;
+        // Get an instance of the App Database
+        final AppDatabase mDB = AppDatabase.GetDB(appContext);
+
+        new AsyncTask() {
+            @Override
+            protected Void doInBackground(Object... objects) {
+                mDB.clearAllTables();
+
+                Template mTem = new Template("Test Template", "test", "Test Template");
+                Log.i(Const.TAG, mTem.hashCode() + " added");
+                mDB.appDao().addTemplate(mTem);
+                for (int i = 0; i < 5; i++) {
+                    long rand = new Random().nextInt(60) * 1000;
+                    Interval interval = new Interval(0, "" + rand, 1, i);
+                    mDB.appDao().addInterval(interval);
+                    Log.i(Const.TAG, "Interval" + i + " added: " + interval.toString());
+                }
+
+                return null;
+            }
+        }.execute();
+
+
+
+    }
 }
