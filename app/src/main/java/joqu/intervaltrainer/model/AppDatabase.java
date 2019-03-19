@@ -12,6 +12,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.IllegalFormatException;
 import java.util.List;
 import java.util.Random;
@@ -32,7 +33,7 @@ public abstract class AppDatabase extends RoomDatabase
     public abstract AppDao appDao();
     //public abstract IntervalDataDao IntervalDataDao();
     // Singleton func to get DB or create if it doesn't exist
-    public static AppDatabase GetDB(final Context context ){
+    public static AppDatabase getDB(final Context context ){
         if (DB == null){
             synchronized (AppDatabase.class){
                     if (BuildConfig.DEBUG) {
@@ -53,7 +54,10 @@ public abstract class AppDatabase extends RoomDatabase
             @Override
             public void onOpen(@NonNull SupportSQLiteDatabase db) {
                 super.onOpen(db);
-
+                if(BuildConfig.DEBUG){
+                    // Populate DB with test data
+                    new AppDatabase.PopulateAppDbAsyncTask(DB).execute();
+                }
 
             }
         };
@@ -80,7 +84,7 @@ public abstract class AppDatabase extends RoomDatabase
                 mDAO.addTemplate(mTem);
                 for (int i=0;i<5;i++)
                 {
-                    long rand = new Random().nextInt(60)*1000;
+                    long rand = new Random().nextInt(5)*1000;
                     Interval interval = new Interval(0,""+rand,1,i);
                     mDAO.addInterval(interval);
                     Log.i(Const.TAG, "Interval"+ i +" added: "+ interval.toString());
@@ -88,7 +92,7 @@ public abstract class AppDatabase extends RoomDatabase
 
 
                 // mDAO.deleteSessions();
-                Session mSess = new Session(0,"20190101 00:00","20190101 00:01","test, test");
+                Session mSess = new Session(0,Long.toString(System.currentTimeMillis()),Long.toString(System.currentTimeMillis()),"test, test");
                 Log.i(Const.TAG, mSess.hashCode()+ " added");
                 mDAO.addSession(mSess);
                 for (int i=0;i<5;i++)
@@ -119,15 +123,30 @@ public abstract class AppDatabase extends RoomDatabase
         protected Long doInBackground(final Object... params) {
             long rows = 0;
             try {
-                if (params[0] instanceof Session)
-                    rows = mDAO.addSession((Session)params[0]);
-                else if (params[0] instanceof Template)
-                    rows = mDAO.addTemplate((Template)params[0]);
-                else if (params[0] instanceof Interval)
-                    rows = mDAO.addInterval((Interval)params[0]);
-                else if (params[0] instanceof IntervalData)
-                    rows = mDAO.addIntervalData((IntervalData)params[0]);
-                else return new Long(-1);
+                for (Object param :
+                        params) {
+                    if (param instanceof Session)
+                        rows = mDAO.addSession((Session)param);
+                    else if (param instanceof Template)
+                        rows = mDAO.addTemplate((Template)param);
+                    else if (param instanceof Interval)
+                        rows = mDAO.addInterval((Interval)param);
+                    else if (param instanceof IntervalData)
+                        rows = mDAO.addIntervalData((IntervalData)param);
+                    else if (param instanceof List){
+                        for (Object item :
+                                (List)param) {
+                            if (item instanceof Session)
+                                rows = mDAO.addSession((Session)item);
+                            else if (item instanceof Template)
+                                rows = mDAO.addTemplate((Template)item);
+                            else if (item instanceof Interval)
+                                rows = mDAO.addInterval((Interval)item);
+                            else if (item instanceof IntervalData)
+                                rows = mDAO.addIntervalData((IntervalData)item);
+                         }
+                        }else return new Long(-1);
+                    }
             } catch (NullPointerException e) {
                 Log.e(Const.TAG, "InsertAsyncTask.doInBackground: params is NULL");
             }

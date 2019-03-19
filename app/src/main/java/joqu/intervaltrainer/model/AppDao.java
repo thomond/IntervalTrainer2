@@ -75,7 +75,7 @@ public interface AppDao
     public long  addInterval(Interval interval);
 
     @Delete
-    public void DeleteInterval(Interval interval);
+    public void deleteInterval(Interval interval);
 
     @Query("select * from template")
     List<Template> getAllTemplates();

@@ -3,13 +3,20 @@ package joqu.intervaltrainer.ui;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.TimeUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import org.w3c.dom.Text;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import joqu.intervaltrainer.R;
 import joqu.intervaltrainer.model.Session;
@@ -29,12 +36,19 @@ public class SessionListAdapter extends RecyclerView.Adapter<SessionListAdapter.
         private final TextView sessionListItem_name;
         private final TextView sessionListItem_date;
         private final TextView sessionListItem_id;
+        private final TextView sessionListItem_time;
+        private final TextView sessionListItem_pace;
+        private final TextView sessionListItem_distance;
+
         public SessionListHolder(@NonNull final View itemView) {
             super(itemView);
             // Viewholder items go here
             sessionListItem_name = itemView.findViewById(R.id.sessionListItem_name);
             sessionListItem_date = itemView.findViewById(R.id.sessionListItem_date);
             sessionListItem_id = itemView.findViewById(R.id.sessionListItem_id);
+            sessionListItem_time = itemView.findViewById(R.id.sessionListItem_time);
+            sessionListItem_distance = itemView.findViewById(R.id.sessionListItem_distance);
+            sessionListItem_pace = itemView.findViewById(R.id.sessionListItem_pace);
             itemView.setOnClickListener(this);
 
         }
@@ -82,13 +96,24 @@ public class SessionListAdapter extends RecyclerView.Adapter<SessionListAdapter.
         if (mSessionList != null && mTemplates != null){
 
             // bind all data columns to view elements
-            for (Template t :
+            /*for (Template t :
                     mTemplates) {
                 if (t.id == mSessionList.get(i).templateId)
                     mViewHolder.sessionListItem_name.setText(t.name);
+            }*/
+            mViewHolder.sessionListItem_name.setText(mSessionList.get(i).title);
+            try {
+                long timeLength = Long.parseLong(mSessionList.get(i).ended)
+                        - Long.parseLong(mSessionList.get(i).started);
+                String formattedTime = new SimpleDateFormat("mm:ss", Locale.getDefault()).format(timeLength);
+                mViewHolder.sessionListItem_time.setText(formattedTime);
+
+                mViewHolder.sessionListItem_distance.setText(Float.toString(mSessionList.get(i).distance));
+                //mViewHolder.sessionListItem_id.setText(mSessionList.get(i).id);
+
+            } catch (Exception e) {
+                          e.printStackTrace();
             }
-            mViewHolder.sessionListItem_date.setText(mSessionList.get(i).started);
-            //mViewHolder.sessionListItem_id.setText(mSessionList.get(i).id);
         }
 
     }

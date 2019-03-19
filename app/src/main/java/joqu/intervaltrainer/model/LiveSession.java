@@ -17,16 +17,18 @@ public class LiveSession {
     public MutableLiveData<Double> latitude;
     public MutableLiveData<Double> longitude;
     public MutableLiveData<Long> timeLeft;
-    private Location mLocation;
-    private List<Location> track;
+    public MutableLiveData<Float> distance;
+    public MutableLiveData<Float> speed;
+    public MutableLiveData<Location> mLocation;
+    private List<Location> tracks;
     static LiveSession INSTANCE;
 
     public LiveSession() {
         this.latitude = new MutableLiveData();
         this.longitude = new MutableLiveData();
         this.timeLeft = new MutableLiveData();
-        this.latitude.postValue(0.0);
-        this.longitude.postValue(0.0);
+        this.mLocation = new MutableLiveData();
+        this.distance = new MutableLiveData();
         this.timeLeft.postValue(Long.valueOf(0));
     }
 

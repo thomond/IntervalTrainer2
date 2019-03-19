@@ -32,16 +32,11 @@ public class TemplateFragment extends Fragment implements ItemClickListener {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_template, container, false);
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+       View v = inflater.inflate(R.layout.fragment_template, container, false);
         mViewModel = ViewModelProviders.of(this).get(AppViewModel.class);
 
         // Populate recycler for  items
-        RecyclerView templateDataRecyclerView = getView().findViewById(R.id.templateListRecyclerView);
+        RecyclerView templateDataRecyclerView = v.findViewById(R.id.templateListRecyclerView);
 
         final TemplateListAdapter mAdapter = new TemplateListAdapter(getContext());
 
@@ -49,6 +44,14 @@ public class TemplateFragment extends Fragment implements ItemClickListener {
         templateDataRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         mAdapter.setTemplateList(mViewModel.getAllTemplates());
+
+
+        return v;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
 
 
 

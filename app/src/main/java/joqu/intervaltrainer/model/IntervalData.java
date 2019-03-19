@@ -24,10 +24,26 @@ public class IntervalData {
     @ColumnInfo(name = "session_id")
     public int sessionId;
     public String data; //max speed, avg speed, distance , time taken , geodata, Datetime started, Datetime ended
+    public String started;
+    public String ended;
+    public int distance;
+    @ColumnInfo(name = "avg_speed")
+    public int avgSpeed;
+    @ColumnInfo(name = "fastest_speed")
+    public int fastestSpeed;
+    public int pace;
 
+    @Ignore
     public IntervalData(int intervalId, int sessionId, String data) {
         this.intervalId = intervalId;
         this.sessionId = sessionId;
         this.data = data;
     }
+    @Ignore
+    public IntervalData(int intervalId, int sessionId) {
+        this.intervalId = intervalId;
+        this.sessionId = sessionId;
+    }
+
+    IntervalData(){}
 }

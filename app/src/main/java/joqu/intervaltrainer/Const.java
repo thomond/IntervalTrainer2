@@ -15,4 +15,11 @@ public interface Const {
     String BROADCAST_SVC_RESUME = "joqu.intervaltrainer.SVC_RESUME" ;
     String INTENT_EXTRA_DO_TIMER_BOOL = "timerOnly";
     String INTENT_EXTRA_DO_GPS_BOOL = "GPSOnly";
+    String INTENT_EXTRA_GPS_DIST_FLOAT = "distance";
+    String INTENT_EXTRA_GPS_SPEED_FLOAT = "speed";
+    String INTENT_EXTRA_COUNTDOWN_TYPE_INT = "type";
+    int MESSAGE_SESSION_DONE = 1;
+    String BROADCAST_SVC_STOPPED = "joqu.intervaltrainer.SVC_STOPPED";
+    String BROADCAST_SVC_STARTED = "joqu.intervaltrainer.SVC_STARTED";
+    String BROADCAST_SVC_PAUSED = "joqu.intervaltrainer.SVC_PAUSED";
 }

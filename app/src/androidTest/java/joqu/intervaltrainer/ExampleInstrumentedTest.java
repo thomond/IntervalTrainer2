@@ -33,6 +33,8 @@ import static org.junit.Assert.*;
  */
 @RunWith(AndroidJUnit4.class)
 public class ExampleInstrumentedTest {
+    private boolean passed;
+
     @Test
     public void useAppContext() {
         // Context of the app under test.
@@ -45,7 +47,7 @@ public class ExampleInstrumentedTest {
     public void insertTest() throws InterruptedException {
         Context appContext = InstrumentationRegistry.getTargetContext();
         // Get an instance of the App Database
-        AppDatabase mDB = AppDatabase.GetDB(appContext);
+        AppDatabase mDB = AppDatabase.getDB(appContext);
         // Aquire a DAO instance from the database and retrieve all sessions present etc.
         AppDao mAppDao = mDB.appDao();
         new AppDatabase.InsertAsyncTask(mAppDao).execute(new Session(0,"20180101","20190102","this is a test"));
@@ -79,7 +81,7 @@ public class ExampleInstrumentedTest {
         assertEquals("joqu.intervaltrainer", appContext.getPackageName());
 
         // Get an instance of the App Database
-        AppDatabase mDB = AppDatabase.GetDB(appContext);
+        AppDatabase mDB = AppDatabase.getDB(appContext);
         new AppDatabase.PopulateAppDbAsyncTask(mDB).execute();
         // Aquire a DAO instance from the database and retrieve all sessions present etc.
         AppDao mAppDao = mDB.appDao();
@@ -101,7 +103,7 @@ public class ExampleInstrumentedTest {
         Intent intent = new Intent(appContext, LiveSessionService.class);
         BroadcastReceiver mReceiver;
         // Get an instance of the App Database
-        final AppDatabase mDB = AppDatabase.GetDB(appContext);
+        final AppDatabase mDB = AppDatabase.getDB(appContext);
 
         new AsyncTask() {
             @Override
@@ -143,10 +145,8 @@ public class ExampleInstrumentedTest {
                     long value;
                     value = intent.getLongExtra("millisUntilFinished", 0);
                     Log.i(context.getString(R.string.app_name),String.valueOf(value/1000)+" seconds.");
-                }else if (action == Const.BROADCAST_COUNTDOWN_DONE){
-                   timersDone++;
-                   if (timersDone==4) assertTrue(true); // Succeed test if five timers finished
-
+                }else if (action == Const.BROADCAST_SVC_STOPPED){
+                   passed=true;
                 }
             }
         };
@@ -154,14 +154,21 @@ public class ExampleInstrumentedTest {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(Const.BROADCAST_COUNTDOWN_UPDATE);
         intentFilter.addAction(Const.BROADCAST_COUNTDOWN_DONE);
+        intentFilter.addAction(Const.BROADCAST_SVC_STOPPED);
         LocalBroadcastManager.getInstance(appContext).registerReceiver(mReceiver,intentFilter);
 
         try {
-            Thread.sleep(300000);
+            while (!passed)
+                Thread.sleep(1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        assertTrue(false);// Fail if timer ends
+
+        AppDao mAppDao = AppDatabase.getDB(appContext).appDao();
+        List<Session> mSessions =  mAppDao.getAllSessions();
+        List<IntervalData> mData = mAppDao.getAllIntervalData();
+
+        //assertTrue(false);// Fail if timer ends
 
         // Unregister whn no longer needed
         LocalBroadcastManager.getInstance(appContext).unregisterReceiver(mReceiver);
@@ -176,7 +183,7 @@ public class ExampleInstrumentedTest {
 
         BroadcastReceiver mReceiver;
         // Get an instance of the App Database
-        final AppDatabase mDB = AppDatabase.GetDB(appContext);
+        final AppDatabase mDB = AppDatabase.getDB(appContext);
 
         new AsyncTask() {
             @Override

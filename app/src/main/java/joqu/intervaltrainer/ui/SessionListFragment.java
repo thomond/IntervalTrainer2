@@ -1,10 +1,13 @@
 package joqu.intervaltrainer.ui;
 import static android.content.ContentValues.TAG;
+
+import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -22,6 +25,8 @@ public class SessionListFragment extends Fragment implements ItemClickListener {
 
     private AppViewModel mViewModel;
     private int mSessionSelected; // The session id selelcted via the session list to be presented
+    private RecyclerView mSessionDataRecyclerView;
+    private  View mSessionView;
 
     public static SessionListFragment newInstance() {
         return new SessionListFragment();
@@ -30,31 +35,37 @@ public class SessionListFragment extends Fragment implements ItemClickListener {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_session, container, false);
+        View v = inflater.inflate(R.layout.fragment_session, container, false);
+        mSessionView = v.findViewById(R.id.ViewSavedSession);
+        mSessionDataRecyclerView = v.findViewById(R.id.sessionListRecyclerView);
+        mViewModel = ViewModelProviders.of(this).get(AppViewModel.class);
+        showSessionList();
+        return v;
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mViewModel = ViewModelProviders.of(this).get(AppViewModel.class);
-
-        // Populate recycler for  items
-        RecyclerView sessionDataRecyclerView = getView().findViewById(R.id.sessionListRecyclerView);
-
-        final SessionListAdapter mAdapter = new SessionListAdapter(getContext(), this);
-
-        sessionDataRecyclerView.setAdapter(mAdapter);
-        sessionDataRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-
-        mAdapter.setSessionList(mViewModel.getAllSessions(),mViewModel.getAllTemplates());
-
-
 
     }
 
+    private void showSessionList() {
+        mSessionDataRecyclerView.setVisibility(View.VISIBLE);
+        mSessionView.setVisibility(View.INVISIBLE);
+
+        // Populate recycler with  items only if empty
+        if (mSessionDataRecyclerView.getAdapter()==null) {
+            final SessionListAdapter mAdapter = new SessionListAdapter(getContext(), this);
+            mSessionDataRecyclerView.setAdapter(mAdapter);
+            mSessionDataRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+            mAdapter.setSessionList(mViewModel.getAllSessions(), mViewModel.getAllTemplates());
+        }
+    }
+
     private void showSession(int sessionID) {
-        View v = getActivity().findViewById(R.id.ViewSavedSession);
-        v.setVisibility(View.VISIBLE);
+        // Hide session list and show session
+        mSessionDataRecyclerView.setVisibility(View.INVISIBLE);
+        mSessionView.setVisibility(View.VISIBLE);
 
         // Session information
         Session msess = mViewModel.getSessionById(sessionID);
