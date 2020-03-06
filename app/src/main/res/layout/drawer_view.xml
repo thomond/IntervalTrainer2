@@ -1,18 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"  android:layout_height="match_parent" android:layout_width="match_parent" >
     <group android:checkableBehavior="single">
-        <item
+<!--        <item
             android:id="@+id/nav_item_new_session"
-            android:enabled="true"
-            android:title="@string/new_session" />
-        <item
-            android:id="@+id/nav_item_saved_session"
+            android:enabled="false"
+            android:title="@string/new_session"
+            android:visibility="invisible"
+            />-->
 
-            android:title="@string/saved_sessions" />
+
+
         <item
             android:id="@+id/nav_item_saved_template"
 
-            android:title="@string/saved_templates" />
+            android:title="@string/new_session" />
+
+        <item
+        android:id="@+id/nav_item_saved_session"
+
+        android:title="@string/saved_sessions" />
         <item
             android:id="@+id/nav_new_template"
             android:enabled="false"

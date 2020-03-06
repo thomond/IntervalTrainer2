@@ -1,8 +1,8 @@
-package joqu.intervaltrainer.ui;
+package joqu.intervaltrainer.ui.adapters;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,8 +12,9 @@ import java.util.Collections;
 import java.util.List;
 
 import joqu.intervaltrainer.R;
-import joqu.intervaltrainer.model.Interval;
-import joqu.intervaltrainer.model.IntervalData;
+import joqu.intervaltrainer.Util;
+import joqu.intervaltrainer.model.entities.Interval;
+import joqu.intervaltrainer.model.entities.IntervalData;
 
 public class IntervalDataAdapter extends RecyclerView.Adapter<IntervalDataAdapter.IntervalDataViewHolder> {
     private final LayoutInflater mLayoutInflater;
@@ -21,14 +22,20 @@ public class IntervalDataAdapter extends RecyclerView.Adapter<IntervalDataAdapte
     private List<Interval> mIntervalTypes = Collections.emptyList();
     public class IntervalDataViewHolder extends RecyclerView.ViewHolder {
         // Interval related items
-        private final TextView dataText;
+        private TextView intervalDataItem_time,
+                intervalDataItem_type,
+                intervalDataItem_speed,
+                intervalDataItem_pace,
+                intervalDataItem_distance;
 
         public IntervalDataViewHolder(@NonNull View itemView) {
             super(itemView);
 
             // Interval related items
-
-            dataText = itemView.findViewById(R.id.IntervalDataItem_data);
+            intervalDataItem_time = itemView.findViewById(R.id.IntervalDataItem_Time);
+            intervalDataItem_type = itemView.findViewById(R.id.IntervalDataItem_type);
+            intervalDataItem_speed = itemView.findViewById(R.id.IntervalDataItem_speed);
+            intervalDataItem_pace = itemView.findViewById(R.id.IntervalDataItem_pace);
         }
     }
 
@@ -44,27 +51,38 @@ public class IntervalDataAdapter extends RecyclerView.Adapter<IntervalDataAdapte
         return new IntervalDataViewHolder(itemView);
     }
 
-    public void setIntervalData(List<IntervalData> intervalData){
+    public void setIntervalData(List<IntervalData> intervalData, List<Interval> intervalTypes){
         // Sets the cached data to be presented and notify that there's been a change
         mIntervalData = intervalData;
+        mIntervalTypes = intervalTypes;
         notifyDataSetChanged();
     }
 
     @Override
-    public void onBindViewHolder(@NonNull IntervalDataViewHolder intervalDataViewHolder, int i) {
+    public void onBindViewHolder(@NonNull IntervalDataViewHolder holder, int i) {
         // Bind data to the Holder
         // Get session from list and add it data to the to the view
         if (mIntervalData != null){
             IntervalData intervalData = mIntervalData.get(i);
-            // bind all data columns to view elements
-            intervalDataViewHolder.dataText.setText(intervalData.data);
+            // Set interval activity type gyplh
+            int typeID = mIntervalTypes.get(intervalData.step).type;
+            String type = intervalData.getType(typeID);
+            holder.intervalDataItem_type.setText(type);
+
+           // set distance,speed,pace etc.
+            long time = Long.valueOf(intervalData.ended) - Long.valueOf(intervalData.started);
+            holder.intervalDataItem_time.setText(Util.millisToTimeFormat(time,"mm:ss"));
+
+
 
         }else{
 
-            intervalDataViewHolder.dataText.setText("Nan");
+
         }
 
     }
+
+
 
     @Override
     public int getItemCount() {

@@ -1,27 +1,28 @@
-package joqu.intervaltrainer.ui;
+package joqu.intervaltrainer.ui.fragments;
 
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
+import androidx.appcompat.app.AlertDialog;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.ViewModelProviders;
+
+import android.app.Notification;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 
 import android.content.IntentFilter;
-import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.LocalBroadcastManager;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TextView;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
@@ -29,14 +30,14 @@ import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import joqu.intervaltrainer.BuildConfig;
 import joqu.intervaltrainer.Const;
-import joqu.intervaltrainer.LiveSessionService;
+import joqu.intervaltrainer.services.LiveSessionService;
 import joqu.intervaltrainer.R;
+import joqu.intervaltrainer.ui.AppViewModel;
+import joqu.intervaltrainer.ui.LiveSessionObserver;
 
+import static androidx.appcompat.app.AlertDialog.*;
 import static joqu.intervaltrainer.Const.BROADCAST_SVC_STARTED;
 import static joqu.intervaltrainer.Const.BROADCAST_SVC_STOPPED;
 
@@ -57,7 +58,9 @@ public class LiveSessionFragment extends Fragment {
                 {
                     mServiceIsRunning = false;
                     if (mStartbutton!=null) mStartbutton.setText("Start");
-                    showSessionList();
+                    //Check if backgrounded
+                    if(MainActivity.isVisible)
+                        MainActivity.switchFragment(SavedSessionFragment.newInstance(),R.id.mainContentFrame,getActivity().getSupportFragmentManager());
                     break;
                 }
                 case BROADCAST_SVC_STARTED:
@@ -76,7 +79,10 @@ public class LiveSessionFragment extends Fragment {
     private boolean mServiceIsRunning = false;
     private Button mStartbutton;
     private MapView mMapView;
-    private Observer<Location> locationObserver;
+    private LiveSessionObserver mLiveSessionObserver;
+    private int mSavedTemplateId;
+
+
 
     public LiveSessionFragment() {
         // Required empty public constructor
@@ -85,7 +91,7 @@ public class LiveSessionFragment extends Fragment {
 
     /**
      * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
+     * this fragment using the provided time.
      *
      * @return A new instance of fragment LiveSessionFragment.
      *
@@ -101,6 +107,12 @@ public class LiveSessionFragment extends Fragment {
         //load/initialize the osmdroid configuration so tiles can be cached
         Configuration.getInstance().load(getContext(), PreferenceManager.getDefaultSharedPreferences(getContext()));
 
+        Bundle arguments = getArguments();
+        if(arguments!=null) {
+            if(arguments.containsKey("template_id"))
+                mSavedTemplateId = arguments.getInt("template_id",-1);
+            else mSavedTemplateId = -1;
+        }
 
         // Register the svc state reciever
         IntentFilter intentFilter = new IntentFilter();
@@ -141,27 +153,27 @@ public class LiveSessionFragment extends Fragment {
     }
 
     public void startService(){
-        int lTemplateID;
-        if (BuildConfig.DEBUG){
-            lTemplateID = 1;
-        }else{
-            // TODO: Add logic to show templatelist
-            throw new UnsupportedOperationException("Not Implemented");
 
+        if (mSavedTemplateId == -1) {
+            if(BuildConfig.DEBUG)mSavedTemplateId = 1;
+            else{
+                Log.e(Const.TAG, "Template ID not valid. " + mSavedTemplateId);
+                throw new UnsupportedOperationException("Template ID not valid. ");
+            }
         }
 
         Intent intent = new Intent(getContext(), LiveSessionService.class);
         // Fill the intent with the temp id and start the service
-        intent.putExtra(Const.INTENT_EXTRA_TEMPLATE_ID_INT,lTemplateID);
+        intent.putExtra(Const.INTENT_EXTRA_TEMPLATE_ID_INT,mSavedTemplateId);
         // Start service
         if (Build.VERSION.SDK_INT >= 26) {
+
             // Start in foreground; id: non-zro identifier, Notification object to show in taskbar
             getContext().startForegroundService(intent);
         }else
             getContext().startService(intent);
 
     }
-
 
 
     @Override
@@ -172,43 +184,16 @@ public class LiveSessionFragment extends Fragment {
         
         mAppViewModel = ViewModelProviders.of(this).get(AppViewModel.class);
 
-        // Create the observer which updates the UI.
-        locationObserver = new Observer<Location>() {
-
-            @Override
-            public void onChanged(@Nullable final Location newData) {
-                String loc = newData.getLatitude() + "," + newData.getLongitude();
-                ((TextView) lView.findViewById(R.id.liveSession_location)).setText(loc);
-                ((TextView) lView.findViewById(R.id.liveSession_speed)).setText(String.valueOf(newData.getSpeed()));
-            }
-        };
-
-        final Observer<Float> distanceObserver = new Observer<Float>() {
-            @Override
-            public void onChanged(@Nullable final Float newData) {
-                ((TextView) lView.findViewById(R.id.liveSession_distance)).setText(Float.toString(newData) + " m ");
-            }
-        };
-        final Observer<Long> timeLeftObserver = new Observer<Long>() {
-            @Override
-            public void onChanged(@Nullable final Long newData) {
-                // Format timeleft to proper format
-                String lFormattedTime = new SimpleDateFormat("mm:ss").format(new Date(newData));
-                ((TextView) lView.findViewById(R.id.liveSessionInterval_countdown)).setText(lFormattedTime);
-
-            }
-        };
-
-        mAppViewModel.getLocation().observe(this, locationObserver);
-        mAppViewModel.getDistance().observe(this, distanceObserver);
-        mAppViewModel.getTimeLeft().observe(this, timeLeftObserver);
+        // create new session observer and link with view model
+        mLiveSessionObserver = new LiveSessionObserver(lView);
+        mAppViewModel.getLiveSession().observe(this, mLiveSessionObserver);
 
         // Get map view and set
         mMapView =  lView.findViewById(R.id.liveSession_map);
         mMapView.setTileSource(TileSourceFactory.OpenTopo);
         // Center map on location
         IMapController mapController = mMapView.getController();
-        mapController.setZoom(15.0);
+        mapController.setZoom(18.0);
         // FIXME: set this to actual location
         mapController.setCenter(new GeoPoint(48.8583, 2.2944));
 
@@ -216,20 +201,46 @@ public class LiveSessionFragment extends Fragment {
         // Set up button click events
         mStartbutton = lView.findViewById(R.id.liveSessionToggleBtn);
         mStartbutton.setText("Start");
+        // confirm stop
         mStartbutton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (!mServiceIsRunning) startService();
-                else stopService();
+                else {
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    builder.setMessage(R.string.LiveSessionConfirm);
+                    builder.setPositiveButton(R.string.ok, new OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    if (mServiceIsRunning) stopService();
+                                    // go back to main screen
+                                    MainActivity.switchFragment(MainFragment.newInstance(),R.id.mainContentFrame,getActivity().getSupportFragmentManager());
+                                }
+                            }
+                    );
+                    builder.setNegativeButton(R.string.cancel, new OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    // NOOP
+                                }
+                            }
+                    );
+
+                    builder.create().show();
+                }
             }
         });
+
+
 
         return lView;
     }
 
     protected void showSessionList( )
     {
+
         // Begin fragment trasaction and replace content frame with session list fragment
-        SessionListFragment mFrag = SessionListFragment.newInstance();
+        SavedSessionFragment mFrag = SavedSessionFragment.newInstance();
         FragmentManager mFragManager = getActivity().getSupportFragmentManager();
         FragmentTransaction mFragTransaction = mFragManager.beginTransaction();
 

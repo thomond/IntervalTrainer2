@@ -1,20 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.SessionListFragment">
+    tools:context=".ui.fragments.SavedSessionFragment">
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:minHeight="0dp">
 
-        <android.support.v7.widget.RecyclerView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/sessionListRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="visible"
+            android:visibility="invisible"
+            tools:layout_editor_absoluteY="660dp"
             tools:listitem="@layout/recycler_session_list" />
 
         <LinearLayout
@@ -22,46 +24,127 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:visibility="invisible">
+            android:visibility="visible">
+
+            <View
+                android:id="@+id/view4"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp" />
+
+            <org.osmdroid.views.MapView
+                android:id="@+id/SavedSession_map"
+                android:layout_width="fill_parent"
+                android:layout_height="200dp"
+                android:padding="10dp" />
+
+            <View
+                android:id="@+id/divider2"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="?android:attr/listDivider"
+                android:foreground="@color/common_google_signin_btn_text_dark_focused"
+                android:visibility="visible" />
 
             <TextView
-                android:id="@+id/sessionItem_name"
-                android:layout_width="match_parent"
+                android:id="@+id/session_title"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Name"
+                android:padding="10dp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Title" />
 
-
-            <TextView
-                android:id="@+id/sessionItem_started"
-                android:layout_width="109dp"
-                android:layout_height="wrap_content"
-                android:text="Started"
-                android:textAppearance="@style/TextAppearance.Compat.Notification.Title" />
-
-            <TextView
-                android:id="@+id/sessionItem_ended"
-                android:layout_width="110dp"
-                android:layout_height="wrap_content"
-                android:text="Ended "
-                android:textAppearance="@style/TextAppearance.Compat.Notification.Title" />
-
-            <TextView
-                android:id="@+id/sessionItem_data"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="77dp"
-                android:text="Data"
-                android:textAppearance="@style/TextAppearance.Compat.Notification.Title" />
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
-            <android.support.v7.widget.RecyclerView
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:text="Time "
+                    android:textAlignment="viewStart" />
+
+                <TextView
+                    android:id="@+id/sessionListItem_time"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:padding="10dp"
+                    android:textAlignment="textStart" />
+
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:text="Distance  "
+                    android:textAlignment="viewStart" />
+
+                <TextView
+                    android:id="@+id/session_distance"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:padding="10dp"
+                    android:textAlignment="textStart" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="match_parent"
+                    android:padding="10dp"
+                    android:text="Pace  "
+                    android:textAlignment="viewStart" />
+
+                <TextView
+                    android:id="@+id/session_pace"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:padding="10dp"
+                    android:textAlignment="textStart" />
+
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="match_parent"
+                    android:padding="10dp"
+                    android:text="Speed  "
+                    android:textAlignment="viewStart" />
+
+                <TextView
+                    android:id="@+id/session_speed"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:padding="10dp"
+                    android:textAlignment="textStart" />
+            </LinearLayout>
+
+            <View
+                android:id="@+id/divider"
+                android:layout_width="wrap_content"
+                android:layout_height="2dp"
+                android:background="?android:attr/listDivider"
+                android:foreground="@color/common_google_signin_btn_text_dark_focused"
+                tools:layout_editor_absoluteX="8dp"
+                tools:layout_editor_absoluteY="64dp" />
+
+
+            <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/intervalDataView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                tools:listitem="@layout/recycler_interval_data" />
+                tools:listitem="@layout/recycler_interval_data" >
+
+            </androidx.recyclerview.widget.RecyclerView>
 
         </LinearLayout>
 
-</android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 <!-- Layout to contain Saved Session info taken from session list-->
 </FrameLayout>

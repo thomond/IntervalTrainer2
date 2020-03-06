@@ -1,12 +1,11 @@
 package joqu.intervaltrainer.ui;
 
 import android.app.Application;
-import android.arch.lifecycle.AndroidViewModel;
-import android.arch.lifecycle.LiveData;
+import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
 import android.content.IntentFilter;
-import android.location.Location;
-import android.support.annotation.NonNull;
-import android.support.v4.content.LocalBroadcastManager;
+import androidx.annotation.NonNull;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -16,10 +15,11 @@ import java.util.concurrent.ExecutionException;
 import joqu.intervaltrainer.Const;
 import joqu.intervaltrainer.model.AppDao;
 import joqu.intervaltrainer.model.AppDatabase;
-import joqu.intervaltrainer.model.Interval;
-import joqu.intervaltrainer.model.IntervalData;
-import joqu.intervaltrainer.model.Session;
-import joqu.intervaltrainer.model.Template;
+import joqu.intervaltrainer.model.entities.Interval;
+import joqu.intervaltrainer.model.entities.IntervalData;
+import joqu.intervaltrainer.model.LiveSession;
+import joqu.intervaltrainer.model.entities.Session;
+import joqu.intervaltrainer.model.entities.Template;
 
 import static android.content.ContentValues.TAG;
 
@@ -136,20 +136,8 @@ public class AppViewModel extends AndroidViewModel {
         return data;
     }
 
-    public LiveData<Double> getLiveLatitude() {
-        return mReceiver.getLiveSession().latitude;
-    }
-    public LiveData<Double> getLiveLongitude() {
-        return mReceiver.getLiveSession().longitude;
-    }
 
-    public LiveData<Long> getTimeLeft() {
-        return mReceiver.getLiveSession().timeLeft;
-    }
-
-    public LiveData<Float> getDistance() {return mReceiver.getLiveSession().distance; }
-
-    public LiveData<Location> getLocation() {  return mReceiver.getLiveSession().mLocation;}
+    public LiveData<LiveSession> getLiveSession() {  return mReceiver.getLiveSession();}
 
 
 }

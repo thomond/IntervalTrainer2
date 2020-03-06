@@ -1,18 +1,23 @@
 package joqu.intervaltrainer.model;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.persistence.room.Dao;
-import android.arch.persistence.room.Dao;
-import android.arch.persistence.room.Delete;
-import android.arch.persistence.room.Insert;
-import android.arch.persistence.room.Query;
+import androidx.room.Dao;
+import androidx.room.Delete;
+import androidx.room.Insert;
+import androidx.room.Query;
 
 import java.util.List;
+
+import joqu.intervaltrainer.model.entities.Interval;
+import joqu.intervaltrainer.model.entities.IntervalData;
+import joqu.intervaltrainer.model.entities.Session;
+import joqu.intervaltrainer.model.entities.Template;
 
 @Dao
 public interface AppDao
 {
     ////// Session access
+
+
     @Query("select * from session where id=:id")
     public Session getSessionById(int id);
 
@@ -47,6 +52,9 @@ public interface AppDao
     @Query("select * from template where id=:id")
     public Template getTemplateById(int id);
 
+    @Query("select * from template where name=:name")
+    public Template getTemplateByName(String name);
+
     //@Query("select interval_ids from template")
     //public int[] getIntervalsById(int id);
 
@@ -68,8 +76,7 @@ public interface AppDao
     @Query("select type from interval where :id=id")
     public int getTypeById(int id);
 
-    @Query("select parameters from interval where :id=id")
-    public String getParametersById(int id);
+
 
     @Insert
     public long  addInterval(Interval interval);

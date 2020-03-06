@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -23,8 +23,20 @@
             android:id="@+id/sessionListItem_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:padding="5dp"
             android:text="Name"
             android:textAppearance="@style/TextAppearance.AppCompat.Title" />
+
+        <TextView
+            android:id="@+id/sessionListItem_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:lineSpacingExtra="10sp"
+            android:padding="5dp"
+            android:text="Date"
+            android:textAppearance="@style/TextAppearance.Compat.Notification.Title"
+            android:typeface="normal"
+            android:visibility="invisible" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -34,6 +46,7 @@
             <TextView
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
+                android:padding="5dp"
                 android:text="Time "
                 android:textAlignment="viewStart" />
 
@@ -42,6 +55,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:padding="5dp"
                 android:textAlignment="textStart" />
         </LinearLayout>
 
@@ -53,6 +67,7 @@
             <TextView
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
+                android:padding="5dp"
                 android:text="Distance  "
                 android:textAlignment="viewStart" />
 
@@ -61,6 +76,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:padding="5dp"
                 android:textAlignment="textStart" />
         </LinearLayout>
 
@@ -72,6 +88,7 @@
             <TextView
                 android:layout_width="100dp"
                 android:layout_height="match_parent"
+                android:padding="5dp"
                 android:text="Pace  "
                 android:textAlignment="viewStart" />
 
@@ -80,6 +97,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:padding="5dp"
                 android:textAlignment="textStart" />
         </LinearLayout>
 
@@ -91,6 +109,7 @@
             <TextView
                 android:layout_width="100dp"
                 android:layout_height="match_parent"
+                android:padding="5dp"
                 android:text="Speed  "
                 android:textAlignment="viewStart" />
 
@@ -99,25 +118,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:padding="5dp"
                 android:textAlignment="textStart" />
         </LinearLayout>
-
-        <TextView
-            android:id="@+id/sessionListItem_date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:lineSpacingExtra="10sp"
-            android:text="Date"
-            android:textAppearance="@style/TextAppearance.Compat.Notification.Title"
-            android:typeface="normal"
-            android:visibility="invisible" />
-
-        <TextView
-            android:id="@+id/sessionListItem_id"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=""
-            android:visibility="invisible" />
 
         <View
             android:id="@+id/divider"
@@ -129,4 +132,4 @@
             tools:layout_editor_absoluteY="64dp" />
     </LinearLayout>
 
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

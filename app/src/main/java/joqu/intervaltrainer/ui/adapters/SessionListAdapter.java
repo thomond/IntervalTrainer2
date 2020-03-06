@@ -1,26 +1,23 @@
-package joqu.intervaltrainer.ui;
+package joqu.intervaltrainer.ui.adapters;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
-import android.util.TimeUtils;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 import joqu.intervaltrainer.R;
-import joqu.intervaltrainer.model.Session;
-import joqu.intervaltrainer.model.Template;
+import joqu.intervaltrainer.Util;
+import joqu.intervaltrainer.model.entities.Session;
+import joqu.intervaltrainer.model.entities.Template;
+import joqu.intervaltrainer.ui.ItemClickListener;
+
 // TODO: Populate ViewHolder with elements
 // TODO: Add content of Sessionlist viewholder
 public class SessionListAdapter extends RecyclerView.Adapter<SessionListAdapter.SessionListHolder> {
@@ -35,20 +32,22 @@ public class SessionListAdapter extends RecyclerView.Adapter<SessionListAdapter.
         // Viewholder items go here
         private final TextView sessionListItem_name;
         private final TextView sessionListItem_date;
-        private final TextView sessionListItem_id;
+        //private final TextView sessionListItem_id;
         private final TextView sessionListItem_time;
         private final TextView sessionListItem_pace;
         private final TextView sessionListItem_distance;
+        private final TextView sessionListItem_fastestspeed;
 
         public SessionListHolder(@NonNull final View itemView) {
             super(itemView);
             // Viewholder items go here
             sessionListItem_name = itemView.findViewById(R.id.sessionListItem_name);
             sessionListItem_date = itemView.findViewById(R.id.sessionListItem_date);
-            sessionListItem_id = itemView.findViewById(R.id.sessionListItem_id);
+            //sessionListItem_id = itemView.findViewById(R.id.sessionListItem_id);
             sessionListItem_time = itemView.findViewById(R.id.sessionListItem_time);
             sessionListItem_distance = itemView.findViewById(R.id.sessionListItem_distance);
             sessionListItem_pace = itemView.findViewById(R.id.sessionListItem_pace);
+            sessionListItem_fastestspeed = itemView.findViewById(R.id.sessionListItem_speed);
             itemView.setOnClickListener(this);
 
         }
@@ -103,12 +102,14 @@ public class SessionListAdapter extends RecyclerView.Adapter<SessionListAdapter.
             }*/
             mViewHolder.sessionListItem_name.setText(mSessionList.get(i).title);
             try {
-                long timeLength = Long.parseLong(mSessionList.get(i).ended)
-                        - Long.parseLong(mSessionList.get(i).started);
-                String formattedTime = new SimpleDateFormat("mm:ss", Locale.getDefault()).format(timeLength);
+                long timeLength = mSessionList.get(i).ended
+                        - mSessionList.get(i).started;
+                String formattedTime = Util.millisToTimeFormat(timeLength,"mm:ss");
                 mViewHolder.sessionListItem_time.setText(formattedTime);
 
-                mViewHolder.sessionListItem_distance.setText(Float.toString(mSessionList.get(i).distance));
+                mViewHolder.sessionListItem_distance.setText(String.format(Locale.getDefault(),"%.2f m",mSessionList.get(i).distance));
+                mViewHolder.sessionListItem_pace.setText(String.format(Locale.getDefault(),"%d secs/m",mSessionList.get(i).pace));
+                mViewHolder.sessionListItem_fastestspeed.setText(String.format(Locale.getDefault(),"%d secs/m",mSessionList.get(i).fastestSpeed));
                 //mViewHolder.sessionListItem_id.setText(mSessionList.get(i).id);
 
             } catch (Exception e) {

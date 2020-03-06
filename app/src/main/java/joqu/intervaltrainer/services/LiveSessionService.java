@@ -1,9 +1,10 @@
-package joqu.intervaltrainer;
+package joqu.intervaltrainer.services;
 
 import android.Manifest;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -11,7 +12,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -20,9 +20,10 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.os.Process;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.LocalBroadcastManager;
+import androidx.core.app.ActivityCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -30,19 +31,16 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Collection;
-import java.util.Date;
 import java.util.LinkedList;
-import java.util.Locale;
 
+import joqu.intervaltrainer.Const;
+import joqu.intervaltrainer.R;
+import joqu.intervaltrainer.Util;
 import joqu.intervaltrainer.model.AppDao;
 import joqu.intervaltrainer.model.AppDatabase;
-import joqu.intervaltrainer.model.Interval;
-import joqu.intervaltrainer.model.IntervalData;
-import joqu.intervaltrainer.model.Session;
-import joqu.intervaltrainer.model.Template;
+import joqu.intervaltrainer.model.entities.Interval;
+import joqu.intervaltrainer.model.SavedSession;
+import joqu.intervaltrainer.model.SessionTemplate;
 
 import static joqu.intervaltrainer.Const.*;
 
@@ -52,15 +50,13 @@ public final class LiveSessionService extends Service {
     private LiveSessionHandler serviceHandler;
     private AppDatabase DB;
     // Template objs for session to be based on
-    Template mTemplate;
-    Collection<Interval> mTemplateIntervals;
+    SessionTemplate mSessionTemplate;
     // Thread workers
     CountdownRunnable mCountdownRunnable;
     GeoTrackerRunnable mGeoTrackerRunnable;
     // session related objs
-    Session mSession;
-    LinkedList<IntervalData> mIntervalData;
-    IntervalData mIntervalDatum;
+    SavedSession mSavedSession;
+
 
     // Class to deal with session state such as Pause/Resume that are recieved via broadcasts
     BroadcastReceiver mServiceStateReciever = new BroadcastReceiver() {
@@ -78,20 +74,21 @@ public final class LiveSessionService extends Service {
             }
     };
 
-
+    private ServiceTTSManager tts;
 
     private AppDao mDao;
 
 
     private class CountdownRunnable implements Runnable {
-        LinkedList<IntervalTimer> mCoundownTimers = new LinkedList<>();
-        IntervalTimer mRunningTimer;
+        LinkedList<IntervalTimer> mIntervalTimers = new LinkedList<>();
+        IntervalTimer mIntervalTimer;
         private long lastTick;// last recorded timer val for resuming
         boolean isPaused = false;
-        private int mType;
-        private int mIntervalIndex = 0;
+        //private int intervalTotal = 0;// Stores total number of elements that was in in list
+        //private int intervalIndex = 0;// Stores current position of interval in list
 
         private class IntervalTimer extends CountDownTimer {
+            private int type;
 
             /**
              * @param millisInFuture    The number of millis in the future from the call
@@ -102,7 +99,15 @@ public final class LiveSessionService extends Service {
              */
             public IntervalTimer(long millisInFuture, long countDownInterval) {
                 super(millisInFuture, countDownInterval);
+            }
 
+
+            public CountDownTimer startTimer(){
+
+                int index = mIntervalTimers.indexOf(this);
+                type = mSessionTemplate.getInterval(index).type;
+                mSavedSession.addIntervalData(mSessionTemplate.getInterval(index));
+                return start();
             }
 
             public void onTick(long millisUntilFinished) {
@@ -111,7 +116,9 @@ public final class LiveSessionService extends Service {
                 Intent intent = new Intent();
                 intent.setAction(getString(R.string.BROADCAST_COUNTDOWN_UPDATE));
                 intent.putExtra(Const.INTENT_EXTRA_TIMELEFT_LONG, millisUntilFinished);
-                intent.putExtra(Const.INTENT_EXTRA_COUNTDOWN_TYPE_INT, mType);
+                intent.putExtra(Const.INTENT_EXTRA_COUNTDOWN_TYPE_INT, type);
+                intent.putExtra(Const.INTENT_EXTRA_COUNTDOWN_TOTAL_INT,  mIntervalTimers.size());
+                intent.putExtra(Const.INTENT_EXTRA_COUNTDOWN_INDEX_INT, mIntervalTimers.indexOf(this)+1);
                 LocalBroadcastManager
                         .getInstance(getApplicationContext()).sendBroadcast(intent);
                 Log.d(TAG,"Data broadcast from "+ this.hashCode()  + ": "+millisUntilFinished);
@@ -124,47 +131,41 @@ public final class LiveSessionService extends Service {
                 intent.setAction(Const.BROADCAST_COUNTDOWN_DONE);
                 LocalBroadcastManager
                         .getInstance(getApplicationContext()).sendBroadcast(intent);
-                // Add final data to interval and replace in list
-                if(mIntervalDatum!=null) {
-                    mIntervalDatum.ended = String.valueOf(new Date().getTime());
-                    mIntervalData.add(mIntervalIndex, mIntervalDatum);
-                }
+
+                int index = mIntervalTimers.indexOf(this);
+                // Finalise the interval data
+                mSavedSession.finaliseInterval();
                 // Pop the list and start next timer
-                if( !mCoundownTimers.isEmpty()){
-                    mRunningTimer = mCoundownTimers.pop();
-                    mRunningTimer.start();
-                    // Go to next intervaldata record in list
-                    mIntervalDatum = mIntervalData.get(mIntervalIndex++);
-                    mIntervalDatum.started = String.valueOf(new Date().getTime());
+                if( !mIntervalTimers.isEmpty() && index < mIntervalTimers.size()-1){
+                    mIntervalTimer = mIntervalTimers.get(index+1);
+                    mIntervalTimer.startTimer();
                 }else{
                     // Session is over, inform handler
                     Log.i(TAG, "Session finished");
                     serviceHandler.handleMessage(Message.obtain(serviceHandler,Const.MESSAGE_SESSION_DONE));
                 }
             }
+
+            
         }
 
         @Override
         public void run() {
             try {
                 // Wait for data to be retrieved from DB
-                while (mTemplateIntervals == null)
+                while (!mSessionTemplate.hasTemplate())
                     Thread.sleep(200);
 
-                for (Interval mInterval : mTemplateIntervals) {
-                    // FIXME: decode parameters
-                    long millisFinished = Long.valueOf(mInterval.parameters);
-                    mType = mInterval.type;
+
+                for (Interval mInterval : mSessionTemplate.getIntervals()) {
+                    // FIXME: decode time
+                    long millisFinished = Long.valueOf(mInterval.time);
                     // push a new timer to the list
-                    mCoundownTimers.push(new IntervalTimer(millisFinished, 500));
-                    mIntervalData.push(new IntervalData(mInterval.id,mSession.id));
+                    mIntervalTimers.push(new IntervalTimer(millisFinished, Const.TIMER_COUNTDOWN_INTERVAL_LONG));
                 }
                 // Start the first countdown and grab the first intervaldata record obj
-                mRunningTimer = mCoundownTimers.pop();
-                mRunningTimer.start();
-                mIntervalDatum = mIntervalData.get(mIntervalIndex++);
-                mIntervalDatum.started = String.valueOf(new Date().getTime());
-
+                mIntervalTimer = mIntervalTimers.getFirst();
+                mIntervalTimer.startTimer();
 
             }catch (InterruptedException e) { e.printStackTrace();}
             catch (NullPointerException e) { Log.e(TAG,"NULL value Encountered: ");e.printStackTrace();}
@@ -185,14 +186,14 @@ public final class LiveSessionService extends Service {
                     intent.setAction(Const.BROADCAST_GPS_UPDATE);
                     intent.putExtra(Const.INTENT_EXTRA_GPS_LONG_DOUBLE, location.getLongitude());
                     intent.putExtra(Const.INTENT_EXTRA_GPS_LAT_DOUBLE, location.getLatitude());
-                    mSession.addLocation(location);
+                    mSavedSession.getSession().addLocation(location);
                     // Calculate distance travelled
                     // FIXME: deal with accuracy issues
                     if (mLastLocation!= null)
                         mDistance += location.distanceTo(mLastLocation);
                     intent.putExtra(Const.INTENT_EXTRA_GPS_DIST_FLOAT,mDistance);
                     intent.putExtra(Const.INTENT_EXTRA_GPS_SPEED_FLOAT, location.getSpeed());
-                    mSession.distance = mDistance;
+                    mSavedSession.getSession().distance = mDistance;
 
                     LocalBroadcastManager
                             .getInstance(getApplicationContext()).sendBroadcast(intent);
@@ -211,9 +212,10 @@ public final class LiveSessionService extends Service {
             {
                 // Create new Location Client
                 mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getApplicationContext());
+
                 // Formulate request based on define values
                 mLocationRequest = LocationRequest.create();
-                mLocationRequest.setInterval(5000);
+                mLocationRequest.setInterval(Const.LOCATION_REQ_INTERVAL_INT);
                 mLocationRequest.setFastestInterval(1000);
                 mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
                 Log.d(TAG,"Location Request Built: "+ mLocationRequest.toString());
@@ -270,7 +272,9 @@ public final class LiveSessionService extends Service {
 
     private final class LiveSessionHandler extends Handler {
         public LiveSessionHandler(Looper looper) {
+
             super(looper);
+
         }
 
         @Override
@@ -281,9 +285,9 @@ public final class LiveSessionService extends Service {
                     case Const.MESSAGE_SESSION_DONE: {
 
                         // Check data nad then persist to DB
-                        mSession.ended = String.valueOf(new Date().getTime());
+                        mSavedSession.finalise();
                         // Do insert
-                        new AppDatabase.InsertAsyncTask(mDao).execute(mSession, mIntervalData);
+                        mSavedSession.saveAll(mDao);
                         stop();
                         break;
                     }
@@ -306,62 +310,25 @@ public final class LiveSessionService extends Service {
             DB = AppDatabase.getDB(getApplicationContext());
             mDao = DB.appDao();
             final int recvedTemplateId =  intent.getIntExtra("template_id",1);
+            final String recvedTemplateName = intent.getStringExtra(Const.INTENT_EXTRA_TEMPLATE_NAME_STRING);
             // Mostly used for debugging
             final boolean lDoTimer = intent.getBooleanExtra(Const.INTENT_EXTRA_DO_TIMER_BOOL, true);
             final boolean lDoGPS = intent.getBooleanExtra(Const.INTENT_EXTRA_DO_GPS_BOOL, true);
 
-            // FIXME:  tthis may leak, make static
-                new AsyncTask(){
-                    @Override
-                    protected Void doInBackground(Object[] objects) {
-                        mTemplate = mDao.getTemplateById(recvedTemplateId);
-                        mTemplateIntervals = mDao.getIntervalsTemplateById(recvedTemplateId);
-                        if (mTemplate!=null) Log.d(TAG,"Read template from DB: "+mTemplate.name);
-                        Log.d(TAG,"Read " +mTemplateIntervals.size() + " Interval records");
+            mSessionTemplate = new SessionTemplate();
 
-                        return null;
-                    }
-                }.execute();
+            // Retriev based on session name or id
+            if(  recvedTemplateName != null)
+                mSessionTemplate.getFromDB(mDao, recvedTemplateName);
+            else mSessionTemplate.getFromDB(mDao, recvedTemplateId);
 
             // Wait for data read
-            while(mTemplate==null) Thread.sleep(200);
+            while(!mSessionTemplate.hasTemplate()) Thread.sleep(200);
+
             // init member objects for saved data
+            mSavedSession = new SavedSession();
+            mSavedSession.init("Session on: " + Util.getDateStr("EEE, d MMM yyyy HH:mm"), mSessionTemplate.getId());
 
-            mSession = new Session(mTemplate.id,String.valueOf(new Date().getTime()));
-            mSession.title = "Session on: " + new SimpleDateFormat("EEE, d MMM yyyy HH:mm", Locale.getDefault()).format(new Date());
-            mIntervalData = new LinkedList<>();
-
-            // For each start request, send a message to start a job and deliver the
-            // start ID so we know which request we're stopping when we finish the job
-            //Message msg = serviceHandler.obtainMessage();
-            //msg.arg1 = startId;
-
-            //serviceHandler.sendMessage(msg);
-            // Process starting intent and Populate service template
-    //        String templateJSON = intent.getStringExtra("Template");
-    //        if(templateJSON!=null){
-    //            mTemplate = Template.fromJSON(templateJSON);
-    //            if(mTemplate==null){
-    //                Log.e("","Intent parameters invalid: templateJSON");
-    //                throw new IllegalArgumentException();
-    //            }
-    //
-    //        }
-    //        String[] templateIntervalsJSON = intent.getStringArrayExtra("Intervals");
-    //        if(templateIntervalsJSON!=null){
-    //            for (String i : templateIntervalsJSON)
-    //            {
-    //                mTemplateIntervals.add(Interval.fromJSON(i));
-    //            }
-    //    }
-
-
-
-
-            // Start up the thread running the service. Note that we create a
-            // separate thread because the service normally runs in the process's
-            // main thread, which we don't want to block. We also make it
-            // background priority so CPU-intensive work doesn't disrupt our UI.
             HandlerThread thread = new HandlerThread("ServiceStartArguments",Process.THREAD_PRIORITY_BACKGROUND);
             thread.start();
 
@@ -369,7 +336,7 @@ public final class LiveSessionService extends Service {
             serviceLooper = thread.getLooper();
             serviceHandler = new LiveSessionHandler(serviceLooper);
 
-
+           ServiceTTSManager.init(getApplicationContext());
 
             // Decalre and post Runnables to handler
             if(lDoTimer) {
@@ -384,7 +351,8 @@ public final class LiveSessionService extends Service {
                     .getInstance(getApplicationContext()).sendBroadcast(new Intent().setAction(Const.BROADCAST_SVC_STARTED));
 
 
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
+            Log.e(TAG, "Service could not start...");
             e.printStackTrace();
         }
         return START_STICKY;
@@ -392,7 +360,7 @@ public final class LiveSessionService extends Service {
 
     private void stop() {
 
-        if (mCountdownRunnable.mRunningTimer!= null) mCountdownRunnable.mRunningTimer.cancel();
+        if (mCountdownRunnable.mIntervalTimer != null) mCountdownRunnable.mIntervalTimer.cancel();
         if (mGeoTrackerRunnable != null)
             if (mGeoTrackerRunnable.mRequestingLocationUpdates)
                 mGeoTrackerRunnable.stopTracking();
@@ -400,6 +368,11 @@ public final class LiveSessionService extends Service {
         send.setAction(Const.BROADCAST_SVC_STOPPED);
         LocalBroadcastManager
                 .getInstance(getApplicationContext()).sendBroadcast(send);
+        ServiceTTSManager.stop();
+        // Request system to stop notification
+        NotificationManager notificationManager =
+                (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        notificationManager.cancel(0 );
         stopSelf();
     }
 
@@ -419,20 +392,37 @@ public final class LiveSessionService extends Service {
         intentFilter.addAction(Const.BROADCAST_SVC_RESUME);
         LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(mServiceStateReciever,intentFilter);
 
+
+        // TODO: Friday 6 March 2020 22:29:55 GMT Add intents to notification to allow fir interaction
+
+        Notification notification;
+
         // For later SDKs use a foreground service
         if (Build.VERSION.SDK_INT >= 26){
-            // Register notification channel
-            int importance = NotificationManager.IMPORTANCE_DEFAULT;
-            NotificationChannel channel = new NotificationChannel(getString(R.string.app_name), "IntervalTrainer Channel", importance);
+            // Register new notification channel
+            NotificationChannel channel = new NotificationChannel(getString(R.string.app_name), "IntervalTrainer Channel", NotificationManager.IMPORTANCE_DEFAULT);
             channel.setDescription("IntervalTrainer Channel");
             getSystemService(NotificationManager.class).createNotificationChannel(channel);
 
-            // Create a Notification
-            Notification mNotification = new Notification.Builder(this,getString(R.string.app_name)).setContentTitle("Session active").setContentText("...").build();
-            startForeground(1, mNotification);
+            // Build a notification for a running session
+            notification = new Notification.Builder(this,channel.getId())
+                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .setContentTitle("Session active")
+                    .setContentText("Session Active").build();
+
+            startForeground(1, notification);
+        }else{
+            // Build a notification for a running session
+             notification = new Notification.Builder(this)
+                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .setContentTitle("Session active")
+                    .setContentText("Session Active").build();
+
+            // Request system to show notification
+            NotificationManager notificationManager =
+                    (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            notificationManager.notify(0, notification);
         }
-
-
 
 
     }
@@ -440,6 +430,7 @@ public final class LiveSessionService extends Service {
     @Override
     public void onDestroy() {
         Log.i(getBaseContext().getString(R.string.app_name),"Service finished...");
+        Toast.makeText(this,"Tracking Has Finished", Toast.LENGTH_LONG).show();
     }
 
 

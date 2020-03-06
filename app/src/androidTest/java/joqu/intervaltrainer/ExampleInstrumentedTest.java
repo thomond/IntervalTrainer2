@@ -4,27 +4,30 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.AsyncTask;
+import android.location.Location;
 import android.os.Build;
-import android.support.test.InstrumentationRegistry;
-import android.support.test.runner.AndroidJUnit4;
-import android.support.v4.content.LocalBroadcastManager;
+import androidx.test.platform.app.InstrumentationRegistry;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import android.util.Log;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.List;
-import java.util.Random;
 
 import joqu.intervaltrainer.model.AppDao;
 import joqu.intervaltrainer.model.AppDatabase;
-import joqu.intervaltrainer.model.Interval;
-import joqu.intervaltrainer.model.IntervalData;
-import joqu.intervaltrainer.model.Session;
-import joqu.intervaltrainer.model.Template;
+import joqu.intervaltrainer.model.SavedSession;
+import joqu.intervaltrainer.model.entities.Interval;
+import joqu.intervaltrainer.model.entities.IntervalData;
+import joqu.intervaltrainer.model.entities.Session;
+import joqu.intervaltrainer.model.entities.Template;
+import joqu.intervaltrainer.services.LiveSessionService;
+import joqu.intervaltrainer.services.ServiceTTSManager;
 
 import static org.junit.Assert.*;
+
 
 /**
  * Instrumented test, which will execute on an Android device.
@@ -32,38 +35,27 @@ import static org.junit.Assert.*;
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
 @RunWith(AndroidJUnit4.class)
-public class ExampleInstrumentedTest {
+ class ExampleInstrumentedTest {
     private boolean passed;
 
     @Test
     public void useAppContext() {
         // Context of the app under test.
-        Context appContext = InstrumentationRegistry.getTargetContext();
+        Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
 
         assertEquals("joqu.intervaltrainer", appContext.getPackageName());
     }
 
     @Test
     public void insertTest() throws InterruptedException {
-        Context appContext = InstrumentationRegistry.getTargetContext();
+        Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         // Get an instance of the App Database
-        AppDatabase mDB = AppDatabase.getDB(appContext);
+        AppDatabase mDB = AppDatabase.getInMemDB(appContext);
         // Aquire a DAO instance from the database and retrieve all sessions present etc.
         AppDao mAppDao = mDB.appDao();
-        new AppDatabase.InsertAsyncTask(mAppDao).execute(new Session(0,"20180101","20190102","this is a test"));
-
-        for (int i=0;i<5;i++)
-        {
-            new AppDatabase.InsertAsyncTask(mAppDao).execute(new IntervalData(0,1,"test "+i));
-        }
 
 
-        new AppDatabase.InsertAsyncTask(mAppDao).execute(new Template(0,"Template","Template 1","Example Template"));
 
-        for (int i=0;i<5;i++)
-        {
-            new AppDatabase.InsertAsyncTask(mAppDao).execute(new Interval(0,"20;minutes",0,i));
-        }
 
         Thread.sleep(1000);
         List<Session> mSessions = mAppDao.getAllSessions();
@@ -72,61 +64,105 @@ public class ExampleInstrumentedTest {
         List<Interval> mIntervalTypes = mAppDao.getAllIntervals();
     }
 
+
     @Test
-    public void daoTest() throws InterruptedException {
+    public void sessionLocationsTest() {
+        Session mSess = new Session(1, System.currentTimeMillis(), System.currentTimeMillis(), "test, test");
+        mSess.locationData ="48.8583,2.2944;48.8583,2.2946;48.8583,2.2970;48.8583,2.2949;";
+        Location l = new Location("test");
+        l.setLatitude(48.8583);
+        l.setLongitude(2.2984);
+        mSess.addLocation(l);
+        for (Location loc:
+        mSess.getLocations()){
+            Log.d(Const.TAG,loc.toString());
+        }
+    }
+
+    @Test
+    public void ServiceTest() throws InterruptedException {
         // Context of the app under test.
-        Context appContext = InstrumentationRegistry.getTargetContext();
-
-        
-        assertEquals("joqu.intervaltrainer", appContext.getPackageName());
-
+        Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        Intent intent = new Intent(appContext, LiveSessionService.class);
+        BroadcastReceiver mReceiver;
         // Get an instance of the App Database
-        AppDatabase mDB = AppDatabase.getDB(appContext);
-        new AppDatabase.PopulateAppDbAsyncTask(mDB).execute();
-        // Aquire a DAO instance from the database and retrieve all sessions present etc.
-        AppDao mAppDao = mDB.appDao();
+        final AppDatabase mDB = AppDatabase.getInMemDB(appContext);
+       // mDB.populateDB();
 
-        // Wait for possibly a little time for the test to be written
-        //Thread.sleep(6000);
 
-        List<Session> mSessions = mAppDao.getAllSessions();
-        List<IntervalData> mData = mAppDao.getAllIntervalData();
-        List<Template> mTemplate = mAppDao.getAllTemplates();
-        List<Interval> mIntervalTypes = mAppDao.getAllIntervals();
+        // Fill the intent with the trst name and enable mock locations and start the service
+        intent.putExtra(Const.INTENT_EXTRA_TEMPLATE_NAME_STRING,"Debug Test Session");
+
+        // Start service
+        if (Build.VERSION.SDK_INT >= 26) {
+            // Start in foreground; id: non-zro identifier, Notification object to show in taskbar
+            appContext.startForegroundService(intent);
+        }else
+            appContext.startService(intent);
+
+
+        // set up BroadcastReciever  to updates from service
+        mReceiver = new BroadcastReceiver() {
+            int timersDone=0;
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String action = intent.getAction();
+                if (action == Const.BROADCAST_GPS_UPDATE) {
+                    float GPS_dist, GPS_speed;
+                    double GPS_lat, GPS_long;
+                    GPS_dist = intent.getFloatExtra(Const.INTENT_EXTRA_GPS_DIST_FLOAT, Float.NaN);
+                    GPS_speed = intent.getFloatExtra(Const.INTENT_EXTRA_GPS_SPEED_FLOAT, Float.NaN);
+                    GPS_lat = intent.getDoubleExtra(Const.INTENT_EXTRA_GPS_LAT_DOUBLE, Double.NaN);
+                    GPS_long = intent.getDoubleExtra(Const.INTENT_EXTRA_GPS_LONG_DOUBLE, Double.NaN);
+                    assertNotEquals(GPS_dist, Float.NaN);
+                    assertNotEquals(GPS_speed, Float.NaN);
+                    assertNotEquals(GPS_lat, Double.NaN);
+                    assertNotEquals(GPS_long, Double.NaN);
+                    // Log.i(context.getString(R.string.app_name),String.valueOf(value/1000)+" seconds.");
+                }if (action == Const.BROADCAST_COUNTDOWN_UPDATE) {
+                    long value;
+                    value = intent.getLongExtra("millisUntilFinished", 0);
+                    Log.i(context.getString(R.string.app_name),String.valueOf(value/1000)+" seconds.");
+                } else if (action == Const.BROADCAST_SVC_STOPPED){
+                    passed=true;
+                }
+            }
+        };
+
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(Const.BROADCAST_GPS_UPDATE);
+        intentFilter.addAction(Const.BROADCAST_COUNTDOWN_UPDATE);
+        intentFilter.addAction(Const.BROADCAST_COUNTDOWN_DONE);
+        intentFilter.addAction(Const.BROADCAST_SVC_STOPPED);
+        LocalBroadcastManager.getInstance(appContext).registerReceiver(mReceiver,intentFilter);
+
+        try {
+            while (!passed)
+                Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        //assertTrue(false);// Fail if timer ends
+
+        // Unregister whn no longer needed
+        LocalBroadcastManager.getInstance(appContext).unregisterReceiver(mReceiver);
+
     }
 
 
     @Test
     public void CountdownServiceTest(){
         // Context of the app under test.
-        Context appContext = InstrumentationRegistry.getTargetContext();
+        Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         Intent intent = new Intent(appContext, LiveSessionService.class);
         BroadcastReceiver mReceiver;
         // Get an instance of the App Database
-        final AppDatabase mDB = AppDatabase.getDB(appContext);
-
-        new AsyncTask() {
-            @Override
-            protected Void doInBackground(Object... objects) {
-                mDB.clearAllTables();
-
-                Template mTem = new Template("Test Template", "test", "Test Template");
-                Log.i(Const.TAG, mTem.hashCode() + " added");
-                mDB.appDao().addTemplate(mTem);
-                for (int i = 0; i < 5; i++) {
-                    long rand = new Random().nextInt(10) * 1000;
-                    Interval interval = new Interval(0, "" + rand, 1, i);
-                    mDB.appDao().addInterval(interval);
-                    Log.i(Const.TAG, "Interval" + i + " added: " + interval.toString());
-                }
-
-                return null;
-            }
-        }.execute();
+        final AppDatabase mDB = AppDatabase.getInMemDB(appContext);
+        //mDB.populateDB();
 
         // Fill the intent with the temp id and start the service
-        intent.putExtra(Const.INTENT_EXTRA_TEMPLATE_ID_INT,1);
-        intent.putExtra(Const.INTENT_EXTRA_DO_GPS_BOOL, false);
+        intent.putExtra(Const.INTENT_EXTRA_TEMPLATE_NAME_STRING,"Debug Test Session");
         // Start service
         if (Build.VERSION.SDK_INT >= 26) {
             // Start in foreground; id: non-zro identifier, Notification object to show in taskbar
@@ -146,7 +182,7 @@ public class ExampleInstrumentedTest {
                     value = intent.getLongExtra("millisUntilFinished", 0);
                     Log.i(context.getString(R.string.app_name),String.valueOf(value/1000)+" seconds.");
                 }else if (action == Const.BROADCAST_SVC_STOPPED){
-                   passed=true;
+                    passed=true;
                 }
             }
         };
@@ -164,47 +200,32 @@ public class ExampleInstrumentedTest {
             e.printStackTrace();
         }
 
-        AppDao mAppDao = AppDatabase.getDB(appContext).appDao();
-        List<Session> mSessions =  mAppDao.getAllSessions();
-        List<IntervalData> mData = mAppDao.getAllIntervalData();
+        List<SavedSession> sessions = SavedSession.getAllSessions(mDB.appDao());
 
-        //assertTrue(false);// Fail if timer ends
-
-        // Unregister whn no longer needed
-        LocalBroadcastManager.getInstance(appContext).unregisterReceiver(mReceiver);
+        Log.d(Const.APP_NAME, "GPSServiceTest: " + sessions.get(0).print());
 
     }
-
     @Test
-    public void ServiceTest(){
+    public void TTSTest(){
         // Context of the app under test.
-        Context appContext = InstrumentationRegistry.getTargetContext();
-        Intent intent = new Intent(appContext, LiveSessionService.class);
+        Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        ServiceTTSManager.init(appContext);
 
-        BroadcastReceiver mReceiver;
-        // Get an instance of the App Database
-        final AppDatabase mDB = AppDatabase.getDB(appContext);
-
-        new AsyncTask() {
-            @Override
-            protected Void doInBackground(Object... objects) {
-                mDB.clearAllTables();
-
-                Template mTem = new Template("Test Template", "test", "Test Template");
-                Log.i(Const.TAG, mTem.hashCode() + " added");
-                mDB.appDao().addTemplate(mTem);
-                for (int i = 0; i < 5; i++) {
-                    long rand = new Random().nextInt(60) * 1000;
-                    Interval interval = new Interval(0, "" + rand, 1, i);
-                    mDB.appDao().addInterval(interval);
-                    Log.i(Const.TAG, "Interval" + i + " added: " + interval.toString());
-                }
-
-                return null;
+        while(!ServiceTTSManager.isInitialized()) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
-        }.execute();
-
-
-
+        }
+        ServiceTTSManager.speak("Hello, World","test");
+        /*while(ServiceTTSManager.isSpeaking()) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }*/
+        return;
     }
 }

@@ -8,4 +8,10 @@
     <string name="BROADCAST_COUNTDOWN_UPDATE">joqu.intervaltrainer.COUNTDOWN_UPDATE</string>
     <string name="BROADCAST_COUNTDOWN_DONE">joqu.intervaltrainer.BROADCAST_COUNTDOWN_DONE</string>
     <string name="BROADCAST_GPS_UPDATE">GPS_UPDATE</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="ok">ok</string>
+    <string name="cancel">cancel</string>
+    <string name="LiveSessionConfirm">"Are you sure you want to stop? This session will not be saved. "</string>
 </resources>

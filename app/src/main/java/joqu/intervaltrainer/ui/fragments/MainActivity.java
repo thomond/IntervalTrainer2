@@ -1,24 +1,32 @@
-package joqu.intervaltrainer.ui;
+package joqu.intervaltrainer.ui.fragments;
 
 import android.Manifest;
-import android.arch.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProviders;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
-import android.support.design.widget.NavigationView;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.ActivityCompat.OnRequestPermissionsResultCallback;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import com.google.android.material.navigation.NavigationView;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.ActivityCompat.OnRequestPermissionsResultCallback;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
-import android.support.v7.widget.Toolbar;
+import android.view.View;
+import android.widget.Button;
 
+import androidx.appcompat.widget.Toolbar;
+
+import joqu.intervaltrainer.Const;
 import joqu.intervaltrainer.R;
+import joqu.intervaltrainer.ui.AppViewModel;
 
 import static joqu.intervaltrainer.Const.TAG;
 
@@ -26,19 +34,25 @@ import static joqu.intervaltrainer.Const.TAG;
 public class MainActivity extends AppCompatActivity implements OnRequestPermissionsResultCallback {
     AppViewModel mAppViewModel;
     DrawerLayout mDrawerLayout;
+    private int mSavedTemplateId;
+    public static boolean isVisible;
 
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.default_view);
 
+        setContentView(R.layout.default_view);
 
         mAppViewModel = ViewModelProviders.of(this).get(AppViewModel.class);
 
         setToolbar();
 
+
+
+
+/*
         // Defines the navigation drawer
         mDrawerLayout = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
@@ -54,34 +68,50 @@ public class MainActivity extends AppCompatActivity implements OnRequestPermissi
                         // Add code here to update the UI based on the item selected
                         // For example, swap UI fragments here
                         if (menuItem.getItemId() == R.id.nav_item_saved_session  )
-                            showSessionList();
+                            switchFragment(SavedSessionFragment.newInstance(), R.id.mainContentFrame,getSupportFragmentManager());
                         else if (menuItem.getItemId() == R.id.nav_item_saved_template  )
-                            showTemplateList();
-                        else if (menuItem.getItemId() == R.id.nav_item_new_session  )
-                            showLiveSession();
+                            switchFragment(TemplateFragment.newInstance(), R.id.mainContentFrame,getSupportFragmentManager());
+                        *//*else if (menuItem.getItemId() == R.id.nav_item_new_session  )
+                            switchFragment(LiveSessionFragment.newInstance(), R.id.mainContentFrame,getSupportFragmentManager());*//*
                         //else if (menuItem.getItemId() == R.id.nav_item_new_session  )
                         //    return true;
                         return true;
                     }
-                });
+                });*/
         checkPermissions();
+        Context context = getApplicationContext();
+        SharedPreferences prefs = context.getSharedPreferences(Const.APP_NAME,0);
 
+        if(prefs.contains("template_id")){
+            mSavedTemplateId = prefs.getInt("template_id",-1);
+        }else mSavedTemplateId = -1;
 
+        // Switch to template screen as main screen
+        switchFragment(MainFragment.newInstance(), R.id.mainContentFrame,getSupportFragmentManager());
 
     }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-    }
-
-
 
 
     @Override
     protected void onStart() {
         super.onStart();
+        isVisible = true;
     }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        isVisible = false;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume(); isVisible = true;
+    }
+
+
+
+
 
     // Permissions check
     protected boolean checkPermissions(){
@@ -119,7 +149,6 @@ public class MainActivity extends AppCompatActivity implements OnRequestPermissi
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                mDrawerLayout.openDrawer(GravityCompat.START);
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -130,19 +159,36 @@ public class MainActivity extends AppCompatActivity implements OnRequestPermissi
         setSupportActionBar(toolbar);
 
         ActionBar actionbar = getSupportActionBar();
-        actionbar.setDisplayHomeAsUpEnabled(true);
-        actionbar.setHomeAsUpIndicator(R.drawable.ic_launcher_background);
+        actionbar.setDisplayHomeAsUpEnabled (true);
+        actionbar.setHomeAsUpIndicator(R.drawable.moreinfo_arrow);
     }
+
+    public static void switchFragment(Fragment f, int rid,FragmentManager fragmentManager)
+    {
+        switchFragment(f,rid,fragmentManager,null);
+
+    }
+
+    public static void switchFragment(Fragment f, int rid,FragmentManager fragmentManager,  Bundle fragmentBundle) {
+
+        // Begin fragment trasaction and replace content frame with session list fragment
+        FragmentTransaction mFragTransaction = fragmentManager.beginTransaction();
+        if(fragmentBundle!=null) f.setArguments(fragmentBundle);
+        mFragTransaction.replace(rid,f);
+        mFragTransaction.addToBackStack(f.getClass().getSimpleName());//for back function
+        mFragTransaction.commit();
+    }
+
 
     protected void showSessionList( )
     {
         // Begin fragment trasaction and replace content frame with session list fragment
-        SessionListFragment mFrag = SessionListFragment.newInstance();
+        SavedSessionFragment mFrag = SavedSessionFragment.newInstance();
         FragmentManager mFragManager = getSupportFragmentManager();
         FragmentTransaction mFragTransaction = mFragManager.beginTransaction();
 
         mFragTransaction.replace(R.id.mainContentFrame,mFrag);
-        mFragTransaction.addToBackStack(null);//for back function
+        mFragTransaction.addToBackStack(mFrag.getClass().getSimpleName());//for back function
         mFragTransaction.commit();
 
     }
@@ -163,6 +209,11 @@ public class MainActivity extends AppCompatActivity implements OnRequestPermissi
     {
         // Begin fragment trasaction and replace content frame with session  fragment
         LiveSessionFragment mFrag = LiveSessionFragment.newInstance();
+        // Include template id in argument list
+        Bundle fragmentBundle = new Bundle();
+        fragmentBundle.putInt("template_id",mSavedTemplateId);
+        mFrag.setArguments(fragmentBundle);
+
         FragmentManager mFragManager = getSupportFragmentManager();
         FragmentTransaction mFragTransaction = mFragManager.beginTransaction();
 

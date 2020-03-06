@@ -1,8 +1,9 @@
 package joqu.intervaltrainer;
 
 public interface Const {
-    String TAG = "joqu.Intervaltrainer";
+    String TAG = "joqu.intervaltrainer";
     String INTENT_EXTRA_TEMPLATE_ID_INT = "template_id";
+    String INTENT_EXTRA_TEMPLATE_NAME_STRING = "template_name";
     String INTENT_EXTRA_GPS_LAT_DOUBLE = "latitude";
     String INTENT_EXTRA_GPS_LONG_DOUBLE = "longitude";
     String BROADCAST_COUNTDOWN_UPDATE = "joqu.intervaltrainer.COUNTDOWN_UPDATE";
@@ -15,6 +16,7 @@ public interface Const {
     String BROADCAST_SVC_RESUME = "joqu.intervaltrainer.SVC_RESUME" ;
     String INTENT_EXTRA_DO_TIMER_BOOL = "timerOnly";
     String INTENT_EXTRA_DO_GPS_BOOL = "GPSOnly";
+    String INTENT_EXTRA_DO_GPS_MOCK_BOOL = "GPSMock";
     String INTENT_EXTRA_GPS_DIST_FLOAT = "distance";
     String INTENT_EXTRA_GPS_SPEED_FLOAT = "speed";
     String INTENT_EXTRA_COUNTDOWN_TYPE_INT = "type";
@@ -22,4 +24,13 @@ public interface Const {
     String BROADCAST_SVC_STOPPED = "joqu.intervaltrainer.SVC_STOPPED";
     String BROADCAST_SVC_STARTED = "joqu.intervaltrainer.SVC_STARTED";
     String BROADCAST_SVC_PAUSED = "joqu.intervaltrainer.SVC_PAUSED";
+    long TIMER_COUNTDOWN_INTERVAL_LONG = 1000;
+    long LOCATION_REQ_INTERVAL_INT = 5000;
+    int DEBUG_INTERVAL_LEN_SEC = 60;
+    String INTENT_EXTRA_COUNTDOWN_TOTAL_INT = "countdownTotal";
+    String INTENT_EXTRA_COUNTDOWN_INDEX_INT = "countdownIndex";
+    int INTERVAL_TYPE_RUN = 1;
+    int INTERVAL_TYPE_WALK = 0;
+    int INTERVAL_TYPE_COOLDOWN = 3;
+    String APP_NAME = "joqu.intervaltrainer";
 }
