@@ -16,9 +16,10 @@
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.503">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -42,7 +43,7 @@
                 android:padding="5dp"
                 android:text="Distance: "
                 android:textAlignment="textStart"
-                android:textSize="18sp" />
+                android:textSize="16sp" />
 
             <TextView
                 android:id="@+id/liveSession_distance"
@@ -51,7 +52,8 @@
                 android:layout_column="1"
                 android:padding="5dp"
                 android:text=""
-                android:textSize="18sp" />
+                android:textAlignment="textEnd"
+                android:textSize="14sp" />
 
         </LinearLayout>
 
@@ -79,7 +81,7 @@
                 android:padding="5dp"
                 android:text="Location: "
                 android:textAlignment="textStart"
-                android:textSize="18sp" />
+                android:textSize="16sp" />
 
             <TextView
                 android:id="@+id/liveSession_location"
@@ -89,7 +91,8 @@
                 android:minWidth="50sp"
                 android:padding="5dp"
                 android:text=""
-                android:textSize="18sp" />
+                android:textAlignment="textEnd"
+                android:textSize="14sp" />
 
         </LinearLayout>
 
@@ -115,7 +118,7 @@
                 android:padding="5dp"
                 android:text="Speed: "
                 android:textAlignment="textStart"
-                android:textSize="18sp" />
+                android:textSize="16sp" />
 
             <TextView
                 android:id="@+id/liveSession_speed"
@@ -124,7 +127,8 @@
                 android:layout_column="1"
                 android:padding="5dp"
                 android:text=""
-                android:textSize="18sp" />
+                android:textAlignment="textEnd"
+                android:textSize="14sp" />
         </LinearLayout>
 
         <LinearLayout
@@ -139,11 +143,11 @@
                 android:layout_height="wrap_content"
                 android:capitalize="none"
                 android:ellipsize="middle"
-                android:padding="5dp"
+                android:padding="10dp"
                 android:text="Interval"
                 android:textAlignment="inherit"
                 android:textAllCaps="true"
-                android:textSize="18sp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -152,7 +156,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:padding="5dp"
-                android:textSize="18sp" />
+                android:textAlignment="textEnd"
+                android:textSize="14sp" />
         </LinearLayout>
 
         <LinearLayout
@@ -202,7 +207,7 @@
                 android:padding="5dp"
                 android:text="Time Left: "
                 android:textAlignment="textStart"
-                android:textSize="18sp" />
+                android:textSize="16sp" />
 
             <TextView
                 android:id="@+id/liveSessionInterval_countdown"
@@ -211,7 +216,8 @@
                 android:layout_column="1"
                 android:padding="5dp"
                 android:text=""
-                android:textSize="18sp" />
+                android:textAlignment="textEnd"
+                android:textSize="14sp" />
         </LinearLayout>
 
         <LinearLayout
@@ -247,7 +253,7 @@
 
         <Space
             android:layout_width="match_parent"
-            android:layout_height="38dp" />
+            android:layout_height="16dp" />
 
         <Space
             android:layout_width="wrap_content"
@@ -265,13 +271,13 @@
             android:text="Location"
             android:textAlignment="inherit"
             android:textAllCaps="true"
-            android:textSize="18sp"
+            android:textSize="20sp"
             android:textStyle="bold" />
 
         <org.osmdroid.views.MapView
             android:id="@+id/liveSession_map"
             android:layout_width="fill_parent"
-            android:layout_height="200dp"
+            android:layout_height="250dp"
             android:padding="10dp" />
 
     </LinearLayout>

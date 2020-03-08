@@ -3,15 +3,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/linearLayout"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_margin="15dp">
 
     <View
         android:id="@+id/view"
-        android:layout_width="wrap_content"
+        android:layout_width="4dp"
         android:layout_height="3dp"
         android:background="?android:attr/listDivider"
-        android:foreground="@color/common_google_signin_btn_text_dark_focused"
+        android:foreground="@color/common_google_signin_btn_text_light_disabled"
         app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
@@ -30,86 +31,102 @@
             android:textAlignment="center"
             android:textSize="48sp" />
 
-        <LinearLayout
-            android:layout_width="383dp"
+        <TableLayout
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:gravity="center"
+            android:orientation="horizontal">
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
                 <TextView
                     android:id="@+id/textView8"
-                    android:layout_width="80dp"
+                    android:layout_width="110dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:padding="5dp"
-                    android:text="Time" />
+                    android:text="Time"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/IntervalDataItem_Time"
-                    android:layout_width="100dp"
+                    android:layout_width="180dp"
                     android:layout_height="wrap_content"
-                    android:padding="5dp" />
+                    android:padding="5dp"
+                    android:textAlignment="textEnd" />
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:layout_width="110dp"
+                    android:layout_height="match_parent"
+                    android:padding="5dp"
+                    android:text="Avg. Pace"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/IntervalDataItem_pace"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:padding="5dp"
+                    android:textAlignment="textEnd" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:padding="5dp"
-                    android:text="Avg. Speed" />
+                    android:text="Avg. Speed"
+                    android:textSize="16dp"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/IntervalDataItem_speed"
-                    android:layout_width="77dp"
+                    android:layout_width="80dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:padding="5dp" />
-            </LinearLayout>
+                    android:padding="5dp"
+                    android:textAlignment="textEnd" />
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
                 <TextView
                     android:layout_width="80dp"
                     android:layout_height="match_parent"
                     android:padding="5dp"
-                    android:text="Avg. Pace" />
-
-                <TextView
-                    android:id="@+id/IntervalDataItem_pace"
-                    android:layout_width="100dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:padding="5dp" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="80dp"
-                    android:layout_height="match_parent"
-                    android:padding="5dp"
-                    android:text="Distance" />
+                    android:text="Distance"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/IntervalDataItem_distance"
-                    android:layout_width="100dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:padding="5dp" />
+                    android:padding="5dp"
+                    android:textAlignment="textEnd" />
 
-            </LinearLayout>
+            </TableRow>
 
-
-        </LinearLayout>
+        </TableLayout>
 
 
     </LinearLayout>

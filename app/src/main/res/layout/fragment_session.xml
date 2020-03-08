@@ -47,7 +47,7 @@
 
             <TextView
                 android:id="@+id/session_title"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Title" />
@@ -62,7 +62,9 @@
                     android:layout_height="wrap_content"
                     android:padding="10dp"
                     android:text="Time "
-                    android:textAlignment="viewStart" />
+                    android:textAlignment="viewStart"
+                    android:textSize="16dp"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/sessionListItem_time"
@@ -70,14 +72,16 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:padding="10dp"
-                    android:textAlignment="textStart" />
+                    android:textAlignment="textEnd" />
 
                 <TextView
                     android:layout_width="100dp"
                     android:layout_height="wrap_content"
                     android:padding="10dp"
                     android:text="Distance  "
-                    android:textAlignment="viewStart" />
+                    android:textAlignment="viewStart"
+                    android:textSize="16dp"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/session_distance"
@@ -85,7 +89,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:padding="10dp"
-                    android:textAlignment="textStart" />
+                    android:textAlignment="textEnd" />
             </LinearLayout>
 
             <LinearLayout
@@ -98,7 +102,9 @@
                     android:layout_height="match_parent"
                     android:padding="10dp"
                     android:text="Pace  "
-                    android:textAlignment="viewStart" />
+                    android:textAlignment="viewStart"
+                    android:textSize="16dp"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/session_pace"
@@ -106,14 +112,16 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:padding="10dp"
-                    android:textAlignment="textStart" />
+                    android:textAlignment="textEnd" />
 
                 <TextView
                     android:layout_width="100dp"
                     android:layout_height="match_parent"
                     android:padding="10dp"
                     android:text="Speed  "
-                    android:textAlignment="viewStart" />
+                    android:textAlignment="viewStart"
+                    android:textSize="16dp"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/session_speed"
@@ -121,7 +129,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:padding="10dp"
-                    android:textAlignment="textStart" />
+                    android:textAlignment="textEnd" />
             </LinearLayout>
 
             <View

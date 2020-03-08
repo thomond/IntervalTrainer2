@@ -1,6 +1,7 @@
 package joqu.intervaltrainer.ui.fragments;
 
 import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -23,6 +24,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+
+import com.google.android.gms.dynamic.SupportFragmentWrapper;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
@@ -57,14 +60,20 @@ public class LiveSessionFragment extends Fragment {
             String action = intent.getAction();
             switch (action)
             {
-                case BROADCAST_SVC_STOPPED:
-                {
+                case BROADCAST_SVC_STOPPED: {
                     mServiceIsRunning = false;
-                    if (mStartbutton!=null) mStartbutton.setText("Start");
+                    if (mStartbutton != null) mStartbutton.setText("Start");
                     //Check if backgrounded
-                    if(MainActivity.isVisible)
-                        switchFragment(SavedSessionFragment.newInstance(), R.id.mainContentFrame, getFragmentManager());
-                    break;
+                    if (MainActivity.isVisible) {
+                        // Try to aquire frgment manager from either activity or context
+                        FragmentManager fm;
+                        fm = getActivity().getSupportFragmentManager();
+                        if(fm==null) fm = ((FragmentActivity) getContext()).getSupportFragmentManager();
+                        if(fm==null) throw new IllegalStateException();
+
+                        switchFragment(SavedSessionFragment.newInstance(), R.id.mainContentFrame, fm);
+                        break;
+                    }
                 }
                 case BROADCAST_SVC_STARTED:
                 {
@@ -72,6 +81,8 @@ public class LiveSessionFragment extends Fragment {
                     if (mStartbutton!=null) mStartbutton.setText("Stop");
                     break;
                 }
+                default:
+                    throw new IllegalStateException("Unexpected value: " + action);
             }
 
         }

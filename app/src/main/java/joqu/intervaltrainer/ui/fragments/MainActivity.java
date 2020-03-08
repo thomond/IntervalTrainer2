@@ -38,7 +38,6 @@ public class MainActivity extends AppCompatActivity implements OnRequestPermissi
     public static boolean isVisible;
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -125,6 +124,14 @@ public class MainActivity extends AppCompatActivity implements OnRequestPermissi
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onBackPressed() {
+        switchFragment(MainFragment.newInstance(), R.id.mainContentFrame,getSupportFragmentManager());
+
+    }
+
+
+
     private void setToolbar() {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -146,7 +153,7 @@ public class MainActivity extends AppCompatActivity implements OnRequestPermissi
         FragmentTransaction mFragTransaction = fragmentManager.beginTransaction();
         if(fragmentBundle!=null) f.setArguments(fragmentBundle);
         mFragTransaction.replace(rid,f);
-        mFragTransaction.addToBackStack(f.getClass().getSimpleName());//for back function
+        //mFragTransaction.addToBackStack(f.getClass().getSimpleName());//for back function
         mFragTransaction.commit();
     }
 
