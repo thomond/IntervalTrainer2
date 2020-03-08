@@ -175,6 +175,8 @@ public final class LiveSessionService extends Service {
     private class GeoTrackerRunnable implements Runnable {
         Location mLastLocation;
         float mDistance;
+
+
         LocationCallback locationCallback = new LocationCallback() { // Callback for location update
             @Override
             public void onLocationResult(LocationResult locationResult)
@@ -193,7 +195,8 @@ public final class LiveSessionService extends Service {
                         mDistance += location.distanceTo(mLastLocation);
                     intent.putExtra(Const.INTENT_EXTRA_GPS_DIST_FLOAT,mDistance);
                     intent.putExtra(Const.INTENT_EXTRA_GPS_SPEED_FLOAT, location.getSpeed());
-                    mSavedSession.getSession().distance = mDistance;
+                    // add unique speed to list to calculate total average
+                    mSavedSession.getCurrentInterval().addSpeed(location.getSpeed());
 
                     LocalBroadcastManager
                             .getInstance(getApplicationContext()).sendBroadcast(intent);

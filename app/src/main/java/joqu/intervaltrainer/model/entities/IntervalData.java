@@ -7,6 +7,7 @@ import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 import androidx.annotation.NonNull;
 
+import java.util.LinkedList;
 import java.util.Random;
 
 import joqu.intervaltrainer.Const;
@@ -39,11 +40,17 @@ public class IntervalData {
     public long started;
     public long ended;
     public float distance;
+
+
+
+    @Ignore
+    // Collection of speeds collected to be averaged out at finalization
+    LinkedList<Float> mSpeeds = new LinkedList<Float>();
     @ColumnInfo(name = "avg_speed")
-    public int avgSpeed;
+    public float avgSpeed;
     @ColumnInfo(name = "fastest_speed")
-    public int fastestSpeed;
-    public int pace;
+    public float fastestSpeed;
+    public float pace;
 
 
 
@@ -92,4 +99,18 @@ public class IntervalData {
         return type;
     }
 
+    @Ignore
+    public void addSpeed(float speed) {
+        this.mSpeeds.add(speed);
+    }
+
+    @Ignore
+    public float getAvgSpeed() {
+        if (mSpeeds.isEmpty()) return 0;
+        float total = 0;
+        for (float s : mSpeeds){
+            total += s;
+        }
+        return total/mSpeeds.size();
+    }
 }

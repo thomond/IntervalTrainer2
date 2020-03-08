@@ -30,6 +30,8 @@ import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 
+import java.util.Objects;
+
 import joqu.intervaltrainer.BuildConfig;
 import joqu.intervaltrainer.Const;
 import joqu.intervaltrainer.services.LiveSessionService;
@@ -40,6 +42,7 @@ import joqu.intervaltrainer.ui.LiveSessionObserver;
 import static androidx.appcompat.app.AlertDialog.*;
 import static joqu.intervaltrainer.Const.BROADCAST_SVC_STARTED;
 import static joqu.intervaltrainer.Const.BROADCAST_SVC_STOPPED;
+import static joqu.intervaltrainer.ui.fragments.MainActivity.switchFragment;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -60,7 +63,7 @@ public class LiveSessionFragment extends Fragment {
                     if (mStartbutton!=null) mStartbutton.setText("Start");
                     //Check if backgrounded
                     if(MainActivity.isVisible)
-                        MainActivity.switchFragment(SavedSessionFragment.newInstance(),R.id.mainContentFrame,getActivity().getSupportFragmentManager());
+                        switchFragment(SavedSessionFragment.newInstance(), R.id.mainContentFrame, getFragmentManager());
                     break;
                 }
                 case BROADCAST_SVC_STARTED:

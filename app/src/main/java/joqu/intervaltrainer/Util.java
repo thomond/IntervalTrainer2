@@ -22,14 +22,14 @@ public class Util {
         return (new SimpleDateFormat(format, Locale.getDefault()).format(new Date().getTime()));
     }
 
-    public static String millisBetween(long start, long end){
+    public static long millisBetween(long start, long end){
         try {
             long timeLength = end - start;
 
-            return String.valueOf(timeLength);
+            return timeLength;
         }catch (Exception e){
             Log.e(Const.TAG, e.toString());
-            return "NaN";
+            return -1;
         }
     }
 
@@ -37,8 +37,8 @@ public class Util {
         //return millisToTimeFormat(String.valueOf(millis),format);
         try {
 
-            String formattedTime = new SimpleDateFormat(format, Locale.getDefault()).format(millis);
-            return formattedTime;
+            return new SimpleDateFormat(format, Locale.getDefault()).format(millis);
+
         }catch (Exception e){
             Log.e(Const.TAG, e.toString());
             return "NaN";

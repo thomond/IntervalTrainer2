@@ -29,11 +29,12 @@ public class SavedSession
         return mCurrentInterval;
     }
 
-    Session mSession;
+    private Session mSession;
 
 
-    LinkedList<IntervalData> mIntervalData;
-    IntervalData mCurrentInterval;
+    private LinkedList<IntervalData> mIntervalData;
+    private IntervalData mCurrentInterval;
+
 
 
     public SavedSession() {
@@ -41,7 +42,7 @@ public class SavedSession
         mIntervalData = new LinkedList();
     }
 
-    public SavedSession(Session s, List<IntervalData> d) {
+    private SavedSession(Session s, List<IntervalData> d) {
         mSession = s;
         mIntervalData = new LinkedList(d);;
     }
@@ -72,6 +73,7 @@ public class SavedSession
         return null;
     }
 
+    // Persist all data
     public boolean saveAll(AppDao dao){
         new AppDatabase.InsertAsyncTask(dao).execute(mSession, mIntervalData);
         return true;
@@ -82,7 +84,14 @@ public class SavedSession
         mSession.started = Util.getDateLong();
         mSession.title = title; //"Session on: " + new SimpleDateFormat("EEE, d MMM yyyy
     }
+
+    // Performs session final calculations and persists all interval data to DB
     public boolean finalise(){
+        // TODO: add average pace and average speed for full session
+        for (IntervalData i : mIntervalData) {
+            mSession.avgSpeed += i.avgSpeed;
+        }
+        mSession.avgSpeed = mSession.avgSpeed / mIntervalData.size();
         mSession.ended = Util.getDateLong();
         return true;
     }
@@ -97,21 +106,24 @@ public class SavedSession
         initInterval();
     }
 
+    // Entrypoint for new Activity Interval.
     public void addIntervalData(Interval interval){
         IntervalData intervalData = new IntervalData(interval.id,mSession.id,interval.step);
         mIntervalData.push(intervalData);
         initInterval();
     }
 
-    public void initInterval(){
+    private void initInterval(){
         mCurrentInterval = mIntervalData.pop();
         mCurrentInterval.started = Util.getDateLong();
 
     }
 
+    // Performs final calculations and adds finished data to list for eventual persistence to DB
     public void finaliseInterval(){
-        // TODO: add pace etc
+        // TODO: add average pace and average speed for iinterval
         mCurrentInterval.ended = Util.getDateLong();
+        mCurrentInterval.avgSpeed = mCurrentInterval.getAvgSpeed();
         mIntervalData.addLast(mCurrentInterval);
 
 

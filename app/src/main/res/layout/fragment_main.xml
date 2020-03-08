@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -10,47 +11,54 @@
         android:layout_height="match_parent">
 
 
+        <LinearLayout
+            android:layout_width="368dp"
+            android:layout_height="405dp"
+            android:layout_gravity="fill"
+            android:layout_margin="30px"
+            android:layout_marginStart="11dp"
+            android:layout_marginTop="11dp"
+            android:layout_marginEnd="99dp"
+            android:layout_marginBottom="350dp"
+            android:gravity="center|clip_vertical"
+            android:orientation="vertical"
+            android:padding="60px"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
+            <Button
+                android:id="@+id/btnNewSession"
+                style="@style/Widget.AppCompat.Button"
+                android:layout_width="324dp"
+                android:layout_height="89dp"
+                android:layout_marginBottom="50px"
+                android:text="New Session"
+                android:textAllCaps="true"
+                android:textStyle="bold" />
 
+            <Button
+                android:id="@+id/btnViewHistory"
+                style="@style/Widget.AppCompat.Button"
+                android:layout_width="match_parent"
+                android:layout_height="89dp"
+                android:layout_marginBottom="50px"
+                android:text="View History"
+                android:textAllCaps="false"
+                android:textStyle="bold" />
 
+            <Button
+                android:id="@+id/button7"
+                style="@style/Widget.AppCompat.Button.Small"
+                android:layout_width="match_parent"
+                android:layout_height="89dp"
+                android:layout_marginBottom="50px"
+                android:text="Add New Template"
+                android:textAllCaps="false"
+                android:textStyle="bold" />
+
+        </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="bottom"
-        android:layout_margin="30px"
-        android:gravity="center|clip_vertical"
-        android:orientation="vertical"
-        android:padding="60px">
-
-        <Button
-            android:id="@+id/btnNewSession"
-            style="@style/Widget.AppCompat.Button.Colored"
-            android:layout_width="match_parent"
-            android:layout_height="89dp"
-            android:layout_marginBottom="50px"
-            android:text="New Session"
-            android:textStyle="bold" />
-
-        <Button
-            android:id="@+id/btnViewHistory"
-            style="@style/Widget.AppCompat.Button.Colored"
-            android:layout_width="match_parent"
-            android:layout_height="89dp"
-            android:layout_marginBottom="50px"
-            android:text="View History"
-            android:textStyle="bold" />
-
-        <Button
-            android:id="@+id/button7"
-            style="@style/Widget.AppCompat.Button.Colored"
-            android:layout_width="match_parent"
-            android:layout_height="89dp"
-            android:layout_marginBottom="50px"
-            android:text="Add New Template"
-            android:textStyle="bold" />
-
-    </LinearLayout>
 
 </FrameLayout>

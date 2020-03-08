@@ -120,7 +120,7 @@ public class SavedSessionFragment extends Fragment implements ItemClickListener 
             // Set session elements
             sessionTitleText.setText(msess.title);
 
-            String time = Util.millisBetween(msess.started, msess.ended);
+            long time = Util.millisBetween(msess.started, msess.ended);
 
             sessionTimeText.setText(Util.millisToTimeFormat(time, "mm:ss"));
             sessionDistanceText.setText(String.format(Locale.getDefault(), "%.2f", msess.distance));
