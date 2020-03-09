@@ -66,12 +66,20 @@ public class LiveSessionFragment extends Fragment {
                     //Check if backgrounded
                     if (MainActivity.isVisible) {
                         // Try to aquire frgment manager from either activity or context
-                        FragmentManager fm;
-                        fm = getActivity().getSupportFragmentManager();
-                        if(fm==null) fm = ((FragmentActivity) getContext()).getSupportFragmentManager();
-                        if(fm==null) throw new IllegalStateException();
+                        FragmentManager fm = null;
+                        try{
+                            fm = getActivity().getSupportFragmentManager();
+                        }catch(NullPointerException e){
+                            try
+                            {
+                                fm = ((FragmentActivity) getContext()).getSupportFragmentManager();
+                            } catch (Exception ex) {
+                                ex.printStackTrace();
+                            }
+                        }
 
-                        switchFragment(SavedSessionFragment.newInstance(), R.id.mainContentFrame, fm);
+                        if(fm!=null)
+                            switchFragment(SavedSessionFragment.newInstance(), R.id.mainContentFrame, fm);
                         break;
                     }
                 }

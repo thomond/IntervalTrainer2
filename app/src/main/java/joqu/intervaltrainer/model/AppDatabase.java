@@ -40,13 +40,10 @@ public abstract class AppDatabase extends RoomDatabase
                 synchronized (AppDatabase.class) {
                     context.deleteDatabase(DBName);
                     DB  = Room.databaseBuilder(context.getApplicationContext(), AppDatabase.class, DBName).build();
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if(DB.appDao().getAllTemplates().isEmpty())
-                                // Populate the DB just created
-                                AppDatabase.populateDB();
-                        }
+                    new Thread(() -> {
+                        if(DB.appDao().getAllTemplates().isEmpty())
+                            // Populate the DB just created
+                            AppDatabase.populateDB();
                     }).start();
                 }
             } catch (Exception e) {

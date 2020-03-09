@@ -38,7 +38,7 @@ public interface AppDao
    // @Query("select * from intervalData where interval_id=:id")
     //public List<IntervalData> getIntervalDataById(int id);
 
-    @Query("select * from intervalData where session_id=:id")
+    @Query("select * from intervalData where session_id=:id  ORDER BY step ASC")
     public List<IntervalData> getIntervalDataBySessionId(int id);
 
     @Insert
@@ -66,14 +66,14 @@ public interface AppDao
 
 
     ////// Interval access /////
-    @Query("select * from interval where id=:id")
+    @Query("select * from interval where id=:id  ORDER BY step ASC")
     public Interval getIntervalById(int id);
 
     ////// Interval access /////
-    @Query("select * from interval where template_id=:id")
+    @Query("select * from interval where template_id=:id  ORDER BY step ASC")
     public List<Interval> getIntervalsTemplateById(int id);
 
-    @Query("select type from interval where :id=id")
+    @Query("select type from interval where :id=id  ORDER BY step ASC")
     public int getTypeById(int id);
 
 
@@ -87,11 +87,11 @@ public interface AppDao
     @Query("select * from template")
     List<Template> getAllTemplates();
 
-    @Query("select * from interval")
+    @Query("select * from interval ORDER BY step ASC")
     List<Interval> getAllIntervals();
 
 
-    @Query("select * from intervalData")
+    @Query("select * from intervalData ORDER BY step ASC")
     List<IntervalData> getAllIntervalData();
 
 }

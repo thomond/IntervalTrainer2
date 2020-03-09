@@ -87,10 +87,12 @@ public class SavedSession
 
     // Performs session final calculations and persists all interval data to DB
     public boolean finalise(){
-        // TODO: add average pace and average speed for full session
+        // TODO: add average pace for full session
         for (IntervalData i : mIntervalData) {
             mSession.avgSpeed += i.avgSpeed;
+            mSession.distance += i.distance;
         }
+
         mSession.avgSpeed = mSession.avgSpeed / mIntervalData.size();
         mSession.ended = Util.getDateLong();
         return true;

@@ -4,7 +4,6 @@ import android.Manifest;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -159,7 +158,7 @@ public final class LiveSessionService extends Service {
 
                 for (Interval mInterval : mSessionTemplate.getIntervals()) {
                     // FIXME: decode time
-                    long millisFinished = Long.valueOf(mInterval.time);
+                    long millisFinished = mInterval.time;
                     // push a new timer to the list
                     mIntervalTimers.push(new IntervalTimer(millisFinished, Const.TIMER_COUNTDOWN_INTERVAL_LONG));
                 }
@@ -173,7 +172,7 @@ public final class LiveSessionService extends Service {
     }
 
     private class GeoTrackerRunnable implements Runnable {
-        Location mLastLocation;
+        Location mLastLocation =null;
         float mDistance;
 
 
@@ -191,8 +190,10 @@ public final class LiveSessionService extends Service {
                     mSavedSession.getSession().addLocation(location);
                     // Calculate distance travelled
                     // FIXME: deal with accuracy issues
-                    if (mLastLocation!= null)
+                    if (mLastLocation != null)
                         mDistance += location.distanceTo(mLastLocation);
+
+                    mSavedSession.getCurrentInterval().distance = mDistance;
                     intent.putExtra(Const.INTENT_EXTRA_GPS_DIST_FLOAT,mDistance);
                     intent.putExtra(Const.INTENT_EXTRA_GPS_SPEED_FLOAT, location.getSpeed());
                     // add unique speed to list to calculate total average

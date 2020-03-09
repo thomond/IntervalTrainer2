@@ -36,7 +36,7 @@ public class SessionListAdapter extends RecyclerView.Adapter<SessionListAdapter.
         private final TextView sessionListItem_time;
         private final TextView sessionListItem_pace;
         private final TextView sessionListItem_distance;
-        private final TextView sessionListItem_fastestspeed;
+        private final TextView sessionListItem_avgSpeed;
 
         public SessionListHolder(@NonNull final View itemView) {
             super(itemView);
@@ -47,7 +47,7 @@ public class SessionListAdapter extends RecyclerView.Adapter<SessionListAdapter.
             sessionListItem_time = itemView.findViewById(R.id.sessionListItem_time);
             sessionListItem_distance = itemView.findViewById(R.id.sessionListItem_distance);
             sessionListItem_pace = itemView.findViewById(R.id.sessionListItem_pace);
-            sessionListItem_fastestspeed = itemView.findViewById(R.id.sessionListItem_speed);
+            sessionListItem_avgSpeed = itemView.findViewById(R.id.sessionListItem_speed);
             itemView.setOnClickListener(this);
 
         }
@@ -109,7 +109,7 @@ public class SessionListAdapter extends RecyclerView.Adapter<SessionListAdapter.
 
                 mViewHolder.sessionListItem_distance.setText(String.format(Locale.getDefault(),"%.2f m",mSessionList.get(i).distance));
                 mViewHolder.sessionListItem_pace.setText(String.format(Locale.getDefault(),"%d secs/m",mSessionList.get(i).pace));
-                mViewHolder.sessionListItem_fastestspeed.setText(String.format(Locale.getDefault(),"%d secs/m",mSessionList.get(i).fastestSpeed));
+                mViewHolder.sessionListItem_avgSpeed.setText(String.format(Locale.getDefault(),"%d secs/m",mSessionList.get(i).avgSpeed));
                 //mViewHolder.sessionListItem_id.setText(mSessionList.get(i).id);
 
             } catch (Exception e) {
