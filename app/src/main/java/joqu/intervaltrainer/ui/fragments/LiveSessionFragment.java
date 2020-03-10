@@ -216,7 +216,6 @@ public class LiveSessionFragment extends Fragment {
         // Center map on location
         IMapController mapController = mMapView.getController();
         mapController.setZoom(18.0);
-        // FIXME: set this to actual location
         mapController.setCenter(new GeoPoint(48.8583, 2.2944));
 
 

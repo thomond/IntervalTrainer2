@@ -8,6 +8,7 @@ import android.widget.TextView;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
+import org.osmdroid.views.overlay.Polyline;
 
 import joqu.intervaltrainer.R;
 import joqu.intervaltrainer.Util;
@@ -23,6 +24,7 @@ public class LiveSessionObserver implements Observer<LiveSession> {
              liveSessionInterval_type,
              liveSessionInterval_total;
     MapView  liveSession_map;
+    private Polyline mPolyLine;
 
     public LiveSessionObserver(View v) {
         liveSession_location = v.findViewById(R.id.liveSession_location);
@@ -44,11 +46,15 @@ public class LiveSessionObserver implements Observer<LiveSession> {
 
             // Add location data to map
             liveSession_map.getController().setCenter(new GeoPoint(liveSession.location));
+            // Add a polyline between each poiunt
+            if(mPolyLine==null) mPolyLine = new Polyline(liveSession_map);
+            mPolyLine.addPoint(new GeoPoint(liveSession.location));
+            liveSession_map.getOverlayManager().add(mPolyLine);
+
             Marker marker = new Marker(liveSession_map) ;
             marker.setPosition(new GeoPoint(liveSession.location));
             marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
-            if(!liveSession_map.getOverlayManager().contains(marker))
-                liveSession_map.getOverlayManager().add(marker);
+            liveSession_map.getOverlayManager().add(marker);
         }
 
         if(liveSession.distance!=null)

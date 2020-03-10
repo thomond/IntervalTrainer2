@@ -20,6 +20,7 @@ import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
+import org.osmdroid.views.overlay.Polyline;
 
 import java.util.List;
 import java.util.Locale;
@@ -48,6 +49,8 @@ public class SavedSessionFragment extends Fragment implements ItemClickListener 
     private TextView sessionPaceText;
     private TextView sessionSpeedText;
     private TextView sessionTitleText;
+    private Polyline mPolyLine;
+
     public static SavedSessionFragment newInstance() {
         return new SavedSessionFragment();
     }
@@ -108,9 +111,16 @@ public class SavedSessionFragment extends Fragment implements ItemClickListener 
             mapController.setZoom(18.0);
             // Aquire locations from session and add locations data to map
             List<Location> locations = msess.getLocations();
+
+
             mapController.setCenter(new GeoPoint(locations.get(0)));
             for (Location l :
                     locations) {
+                // Add a polyline between each poiunt
+                if(mPolyLine==null) mPolyLine = new Polyline(mMapView);
+                mPolyLine.addPoint(new GeoPoint(l));
+                mMapView.getOverlayManager().add(mPolyLine);
+
                 Marker marker = new Marker(mMapView);
                 marker.setPosition(new GeoPoint(l));
                 marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
