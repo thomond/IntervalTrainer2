@@ -90,6 +90,7 @@
                 android:layout_column="1"
                 android:minWidth="50sp"
                 android:padding="5dp"
+                android:singleLine="true"
                 android:text=""
                 android:textAlignment="textEnd"
                 android:textSize="14sp" />

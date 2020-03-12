@@ -130,15 +130,16 @@ public class MainActivity extends AppCompatActivity implements OnRequestPermissi
 
     }
 
-
-
     private void setToolbar() {
         Toolbar toolbar = findViewById(R.id.toolbar);
+
         setSupportActionBar(toolbar);
 
         ActionBar actionbar = getSupportActionBar();
-        actionbar.setDisplayHomeAsUpEnabled (true);
-        actionbar.setHomeAsUpIndicator(R.drawable.moreinfo_arrow);
+        //actionbar.setDisplayHomeAsUpEnabled (true);
+        actionbar.setHomeButtonEnabled(true);
+
+        //actionbar.setHomeAsUpIndicator(R.drawable.moreinfo_arrow);
     }
 
     public static void switchFragment(Fragment f, int rid,FragmentManager fragmentManager)
@@ -148,12 +149,10 @@ public class MainActivity extends AppCompatActivity implements OnRequestPermissi
     }
 
     public static void switchFragment(Fragment f, int rid,FragmentManager fragmentManager,  Bundle fragmentBundle) {
-
         // Begin fragment trasaction and replace content frame with session list fragment
         FragmentTransaction mFragTransaction = fragmentManager.beginTransaction();
         if(fragmentBundle!=null) f.setArguments(fragmentBundle);
         mFragTransaction.replace(rid,f);
-        //mFragTransaction.addToBackStack(f.getClass().getSimpleName());//for back function
         mFragTransaction.commit();
     }
 

@@ -14,6 +14,7 @@ import java.util.List;
 import joqu.intervaltrainer.R;
 import joqu.intervaltrainer.Util;
 import joqu.intervaltrainer.model.entities.Interval;
+import joqu.intervaltrainer.model.entities.IntervalData;
 import joqu.intervaltrainer.model.entities.Template;
 
 // TODO: Populate ViewHolder with elements
@@ -25,13 +26,14 @@ public class IntervalAdapter extends RecyclerView.Adapter<IntervalAdapter.Interv
     public class IntervalListHolder extends RecyclerView.ViewHolder {
         // Viewholder items go here
        private final TextView intervalListItem_time;
+        private final TextView intervalListItem_type;
        //private final TextView intervalListItem_date;
 
         public IntervalListHolder(@NonNull View itemView) {
             super(itemView);
             // Viewholder items go here
            intervalListItem_time = itemView.findViewById(R.id.IntervalItem_Time);
-           //intervalListItem_date = itemView.findViewById(R.id.intervalListItem_date);
+           intervalListItem_type = itemView.findViewById(R.id.IntervalItem_type);
         }
     }
 
@@ -64,6 +66,8 @@ public class IntervalAdapter extends RecyclerView.Adapter<IntervalAdapter.Interv
             // bind all data columns to view elements
             String time = Util.millisToTimeFormat(mIntervalList.get(i).time,"mm:ss");
             holder.intervalListItem_time.setText(time);
+            String type = IntervalData.getType(mIntervalList.get(i).type);
+            holder.intervalListItem_type.setText(type);
             //mViewHolder.intervalListItem_name.setText(mIntervalList.get(i).started);
         }
 

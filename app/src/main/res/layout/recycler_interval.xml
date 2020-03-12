@@ -9,17 +9,19 @@
 
     <LinearLayout
         android:id="@+id/linearLayout2"
-        android:layout_width="wrap_content"
+        android:layout_width="289dp"
         android:layout_height="78dp"
+        android:divider="@drawable/sharp_remove_black_36"
         android:orientation="horizontal"
         android:padding="5dp"
-        tools:layout_editor_absoluteX="1dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         tools:layout_editor_absoluteY="0dp">
 
 
         <TextView
             android:id="@+id/IntervalItem_type"
-            android:layout_width="wrap_content"
+            android:layout_width="60dp"
             android:layout_height="match_parent"
             android:padding="5dp"
             android:text="-"
