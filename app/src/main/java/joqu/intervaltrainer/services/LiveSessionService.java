@@ -172,8 +172,6 @@ public final class LiveSessionService extends Service {
     }
 
     private class GeoTrackerRunnable implements Runnable {
-        Location mLastLocation =null;
-        float mDistance;
 
 
         LocationCallback locationCallback = new LocationCallback() { // Callback for location update
@@ -182,28 +180,23 @@ public final class LiveSessionService extends Service {
             {
                 if (locationResult == null) return;
                 for (Location location : locationResult.getLocations()) {
+                    // Add location to saved session
+                    mSavedSession.addNewLocation(location);
+
                     // broadcast  location data
                     Intent intent = new Intent();
                     intent.setAction(Const.BROADCAST_GPS_UPDATE);
                     intent.putExtra(Const.INTENT_EXTRA_GPS_LONG_DOUBLE, location.getLongitude());
                     intent.putExtra(Const.INTENT_EXTRA_GPS_LAT_DOUBLE, location.getLatitude());
-                    mSavedSession.getSession().addLocation(location);
-                    // Calculate distance travelled
-                    // FIXME: deal with accuracy issues
-                    if (mLastLocation != null)
-                        mDistance += location.distanceTo(mLastLocation);
-
-                    mSavedSession.getCurrentInterval().distance = mDistance;
-                    intent.putExtra(Const.INTENT_EXTRA_GPS_DIST_FLOAT,mDistance);
+                    intent.putExtra(Const.INTENT_EXTRA_GPS_DIST_FLOAT,mSavedSession.getCurrentInterval().distance);
                     intent.putExtra(Const.INTENT_EXTRA_GPS_SPEED_FLOAT, location.getSpeed());
-                    // add unique speed to list to calculate total average
-                    mSavedSession.getCurrentInterval().addSpeed(location.getSpeed());
+
 
                     LocalBroadcastManager
                             .getInstance(getApplicationContext()).sendBroadcast(intent);
+
                     Log.d(TAG,"Accuracy: "+location.getAccuracy());
                     Log.d(TAG,"Location Update:"+location.toString());
-                    mLastLocation = location;
                 }
             }
         };

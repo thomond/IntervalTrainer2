@@ -17,6 +17,8 @@ import org.junit.runner.RunWith;
 
 import joqu.intervaltrainer.model.AppDao;
 import joqu.intervaltrainer.model.AppDatabase;
+import joqu.intervaltrainer.model.SavedSession;
+import joqu.intervaltrainer.model.SessionTemplate;
 import joqu.intervaltrainer.services.LiveSessionService;
 
 import static org.junit.Assert.assertEquals;
@@ -37,7 +39,7 @@ public class GPSTests {
          appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         assertEquals("joqu.intervaltrainer", appContext.getPackageName());
         // Get an instance of the App Database and send the population callback
-        mDB = AppDatabase.getInMemDB(appContext, null);
+        mDB = AppDatabase.getInMemDB(appContext);
         // Aquire a DAO instance from the database and retrieve all sessions present etc.
         mAppDao = mDB.appDao();
 
@@ -108,4 +110,43 @@ public class GPSTests {
 
     }
 
+    @Test
+    public void SavedSessionTest() throws InterruptedException {
+
+        // Create session entity from DB template
+        SessionTemplate mSessionTemplate = new SessionTemplate();
+
+        // Retrieve based on session name or id
+        mSessionTemplate.getFromDB(mAppDao, "Debug Test Session");
+
+
+        // Wait for data read
+        while(!mSessionTemplate.hasTemplate()) Thread.sleep(200);
+
+        // init member objects for saved data
+        SavedSession mSavedSession = new SavedSession();
+        mSavedSession.init("Session on: " + Util.getDateStr("EEE, d MMM yyyy HH:mm"), mSessionTemplate.getId());
+
+        // Iterate through template intervals and add corresponding to saved session
+        for (int index = 0; index < mSessionTemplate.getIntervals().size() ;index++) {
+            mSavedSession.addIntervalData(mSessionTemplate.getInterval(index));
+            //  formulate GPS data using lat,long,spd entries
+            String locData = "53.37832,-6.21321,5;53.37822,-6.21346,10;53.37807,-6.2133,5;53.37815,-6.21304,5;53.37832,-6.21321,5";
+            mSavedSession.addNewLocations(locData);
+            // Finalise the interval data
+            mSavedSession.finaliseInterval();
+        }
+
+        // Finalise and persist
+        mSavedSession.finalise();
+
+        Log.d(this.getClass().getSimpleName(),mSavedSession.getString());
+
+
+
+
+
+
+
+    }
 }

@@ -114,11 +114,13 @@ public class MainActivity extends AppCompatActivity implements OnRequestPermissi
         }
     }
 
+
     // Override for the Options menu item in main toolbar
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
+                switchFragment(MainFragment.newInstance(), R.id.mainContentFrame,getSupportFragmentManager());
                 return true;
         }
         return super.onOptionsItemSelected(item);

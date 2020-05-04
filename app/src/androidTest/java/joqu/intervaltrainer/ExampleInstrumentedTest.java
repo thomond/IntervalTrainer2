@@ -6,10 +6,11 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.location.Location;
 import android.os.Build;
-import androidx.test.platform.app.InstrumentationRegistry;
-import androidx.test.ext.junit.runners.AndroidJUnit4;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import android.util.Log;
+
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.platform.app.InstrumentationRegistry;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,7 +27,8 @@ import joqu.intervaltrainer.model.entities.Template;
 import joqu.intervaltrainer.services.LiveSessionService;
 import joqu.intervaltrainer.services.ServiceTTSManager;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 
 /**
@@ -202,7 +204,7 @@ import static org.junit.Assert.*;
 
         List<SavedSession> sessions = SavedSession.getAllSessions(mDB.appDao());
 
-        Log.d(Const.APP_NAME, "GPSServiceTest: " + sessions.get(0).print());
+        Log.d(Const.APP_NAME, "GPSServiceTest: " + sessions.get(0).getString());
 
     }
     @Test

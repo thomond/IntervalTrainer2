@@ -1,19 +1,18 @@
 package joqu.intervaltrainer.model;
 
+import android.location.Location;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import joqu.intervaltrainer.Const;
 import joqu.intervaltrainer.Util;
 import joqu.intervaltrainer.model.entities.Interval;
 import joqu.intervaltrainer.model.entities.IntervalData;
 import joqu.intervaltrainer.model.entities.Session;
-
-import static joqu.intervaltrainer.Const.TAG;
 
 /**
  * Class to encapsulate data entities for a saved session
@@ -42,9 +41,49 @@ public class SavedSession
         mIntervalData = new LinkedList();
     }
 
-    private SavedSession(Session s, List<IntervalData> d) {
+    public SavedSession(Session s, List<IntervalData> d) {
         mSession = s;
         mIntervalData = new LinkedList(d);;
+    }
+
+    // Takes a string of Locations delimited by ";" and calls addNewLocation to parse each location string
+    public void addNewLocations(String locationsStr){
+        try {
+            String[] locationData = locationsStr.split(";");
+            for (String location : locationData
+            ) {
+                addNewLocation(location);
+            }
+        }catch (Exception e){
+            Log.e(Const.TAG,e.getMessage());
+            throw e;
+        }
+
+    }
+
+    //Takes a string in format of lat,long,speed and creates a Locatation form this and then calls the regular addnew location
+    public void addNewLocation(String locationStr){
+        String[] locationData = locationStr.split(",");
+        Location location = new  Location("Debug");
+        try {
+            double _lat = Double.parseDouble(locationData[0]);
+            double _long = Double.parseDouble(locationData[1]);
+            location.setLatitude(_lat);
+            location.setLongitude(_long);
+            location.setSpeed(Float.parseFloat(locationData[2]));
+
+            addNewLocation(location);
+        }catch (Exception e){
+            Log.e(Const.TAG,e.getMessage());
+            throw e;
+        }
+    }
+
+    //Adds new location object to session
+    public void addNewLocation(Location location){
+        // Update session object and current interval
+        getSession().addLocation(location);
+        getCurrentInterval().addLocation(location);
     }
 
     /*
@@ -131,19 +170,32 @@ public class SavedSession
 
     }
 
-    public String print(){
-        StringBuffer buff = new StringBuffer();
-        buff.append(mSession.title+"\n");
-        buff.append(mSession.description+"\n");
-        buff.append(mSession.data+"\n");
-        buff.append(mSession.distance + " " + mSession.avgSpeed+"\n");
-        buff.append("Intervals:"+"\n");
+    public String getString(){
+        StringBuilder buff = new StringBuilder()
+                .append("###############################\n")
+                .append(mSession.title).append("\n")
+                .append("Average Desc.: ")
+                .append(mSession.description).append("\n")
+                .append("Average Data: ")
+                .append(mSession.data).append("\n")
+                .append("Average Distance: ")
+                .append(mSession.distance).append("\n")
+                .append("Average Speed: ")
+                .append(mSession.avgSpeed).append("\n")
+                .append("Locations: ")
+                .append(mSession.locationData).append("\n")
+                .append("Intervals:"+"\n");
         for (IntervalData i :
                 mIntervalData) {
-            buff.append(i.id+"   ");
-            buff.append(i.data+"\t");
+            buff.append("##### ID: ").append(i.id).append("\n")
+                    .append("Step: ").append(i.step).append("\n")
+                    .append("Distance: ").append(i.distance).append("\n")
+                    .append("Started: ").append(i.started).append("\n")
+                    .append("Ended: ").append(i.ended).append("\n")
+                    .append("########## ").append("\n");
         }
-        buff.append("\n");
+        buff.append("###############################\n");
+
 
 
         return buff.toString();

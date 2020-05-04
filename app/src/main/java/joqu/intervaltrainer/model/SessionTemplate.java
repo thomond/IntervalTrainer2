@@ -3,7 +3,6 @@ package joqu.intervaltrainer.model;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import java.io.StringBufferInputStream;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -108,6 +107,7 @@ public class SessionTemplate{
             buff.append(i.type+"\t");
         }
         buff.append("\n");
+
 
 
         return buff.toString();

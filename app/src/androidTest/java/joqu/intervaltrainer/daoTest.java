@@ -64,7 +64,7 @@ public class daoTest {
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         assertEquals("joqu.intervaltrainer", appContext.getPackageName());
         // Get an instance of the App Database and send the population callback
-        mDB = AppDatabase.getInMemDB(appContext, null);
+        mDB = AppDatabase.getInMemDB(appContext);
         // Aquire a DAO instance from the database and retrieve all sessions present etc.
         mAppDao = mDB.appDao();
 
