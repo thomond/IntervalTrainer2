@@ -1,19 +1,18 @@
 package joqu.intervaltrainer.ui.fragments;
-import static android.content.ContentValues.TAG;
-
-import androidx.lifecycle.ViewModelProviders;
 import android.location.Location;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
@@ -22,17 +21,21 @@ import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.Polyline;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
 import joqu.intervaltrainer.Const;
 import joqu.intervaltrainer.R;
 import joqu.intervaltrainer.Util;
+import joqu.intervaltrainer.model.entities.IntervalData;
 import joqu.intervaltrainer.model.entities.Session;
 import joqu.intervaltrainer.ui.AppViewModel;
-import joqu.intervaltrainer.ui.adapters.IntervalDataAdapter;
 import joqu.intervaltrainer.ui.ItemClickListener;
+import joqu.intervaltrainer.ui.adapters.IntervalDataAdapter;
 import joqu.intervaltrainer.ui.adapters.SessionListAdapter;
+
+import static android.content.ContentValues.TAG;
 
 // TODO: generalise fragment to also show selected session
 public class SavedSessionFragment extends Fragment implements ItemClickListener {
@@ -103,14 +106,18 @@ public class SavedSessionFragment extends Fragment implements ItemClickListener 
         try {
             // Session information
             Session msess = mViewModel.getSessionById(sessionID);
-
+            List<IntervalData> mIntervalData = mViewModel.getSessionIntervalData(sessionID);
 
             mMapView.setTileSource(TileSourceFactory.OpenTopo);
             // Center map on location
             IMapController mapController = mMapView.getController();
             mapController.setZoom(18.0);
-            // Aquire locations from session and add locations data to map
-            List<Location> locations = msess.getLocations();
+            // Aquire locations from Intervals and add locations data to map
+            List<Location> locations = new LinkedList<>();
+            for (IntervalData i :
+                    mIntervalData) {
+                locations.addAll(i.getLocations());
+            }
 
 
             mapController.setCenter(new GeoPoint(locations.get(0)));

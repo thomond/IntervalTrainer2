@@ -70,7 +70,9 @@ public class SavedSession
             double _long = Double.parseDouble(locationData[1]);
             location.setLatitude(_lat);
             location.setLongitude(_long);
-            location.setSpeed(Float.parseFloat(locationData[2]));
+            if(locationData.length>2)
+                location.setSpeed(Float.parseFloat(locationData[2]));
+            else location.setSpeed(0);
 
             addNewLocation(location);
         }catch (Exception e){
@@ -82,7 +84,7 @@ public class SavedSession
     //Adds new location object to session
     public void addNewLocation(Location location){
         // Update session object and current interval
-        getSession().addLocation(location);
+        //getSession().addLocation(location);
         getCurrentInterval().addLocation(location);
     }
 
@@ -172,29 +174,30 @@ public class SavedSession
 
     public String getString(){
         StringBuilder buff = new StringBuilder()
-                .append("###############################\n")
+                .append("════════════════════════════════\n")
                 .append(mSession.title).append("\n")
-                .append("Average Desc.: ")
+                .append("║  Desc.: ")
                 .append(mSession.description).append("\n")
-                .append("Average Data: ")
+                .append("║  Data: ")
                 .append(mSession.data).append("\n")
-                .append("Average Distance: ")
+                .append("║  Distance: ")
                 .append(mSession.distance).append("\n")
-                .append("Average Speed: ")
+                .append("║  Speed: ")
                 .append(mSession.avgSpeed).append("\n")
-                .append("Locations: ")
+                .append("║ Locations: ")
                 .append(mSession.locationData).append("\n")
-                .append("Intervals:"+"\n");
+                .append("║ Intervals:"+"\n");
         for (IntervalData i :
                 mIntervalData) {
-            buff.append("##### ID: ").append(i.id).append("\n")
-                    .append("Step: ").append(i.step).append("\n")
-                    .append("Distance: ").append(i.distance).append("\n")
-                    .append("Started: ").append(i.started).append("\n")
-                    .append("Ended: ").append(i.ended).append("\n")
-                    .append("########## ").append("\n");
+            buff.append("═══════ ID: ").append(i.id).append("\n")
+                    .append("║ Step: ").append(i.step).append("\n")
+                    .append("║ Locations: ").append(i.locationData).append("\n")
+                    .append("║ Distance: ").append(i.distance).append("\n")
+                    .append("║ Started: ").append(i.started).append("\n")
+                    .append("║ Ended: ").append(i.ended).append("\n")
+                    .append("════════════════ ").append("\n");
         }
-        buff.append("###############################\n");
+        buff.append("════════════════════════════════\n");
 
 
 

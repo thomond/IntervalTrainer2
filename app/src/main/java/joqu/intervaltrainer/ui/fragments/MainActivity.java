@@ -1,28 +1,25 @@
 package joqu.intervaltrainer.ui.fragments;
 
 import android.Manifest;
-import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+
 import androidx.annotation.NonNull;
-import com.google.android.material.navigation.NavigationView;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.ActivityCompat.OnRequestPermissionsResultCallback;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-
-import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.ViewModelProviders;
 
 import joqu.intervaltrainer.Const;
 import joqu.intervaltrainer.R;
@@ -108,22 +105,29 @@ public class MainActivity extends AppCompatActivity implements OnRequestPermissi
         for(int i =0; i< grantResults.length;i++){
             Log.i(TAG,permissions[i] + ": " + grantResults[i]);
             // TODO: maybe prompt with information specifying that location/storage is 100% needed
-            if(grantResults[i] == PackageManager.PERMISSION_GRANTED)
-                continue;
-            else checkPermissions();// Loop until we get what we need
+            if(grantResults[i] != PackageManager.PERMISSION_GRANTED)
+                checkPermissions();// Loop until we get what we need
         }
     }
 
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu,menu);
+        return true;
+    }
 
     // Override for the Options menu item in main toolbar
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case android.R.id.home:
+            case R.id.action_menu_home:
                 switchFragment(MainFragment.newInstance(), R.id.mainContentFrame,getSupportFragmentManager());
                 return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-        return super.onOptionsItemSelected(item);
+
     }
 
     @Override
@@ -138,8 +142,9 @@ public class MainActivity extends AppCompatActivity implements OnRequestPermissi
         setSupportActionBar(toolbar);
 
         ActionBar actionbar = getSupportActionBar();
-        //actionbar.setDisplayHomeAsUpEnabled (true);
+        actionbar.setDisplayShowHomeEnabled(true);
         actionbar.setHomeButtonEnabled(true);
+
 
         //actionbar.setHomeAsUpIndicator(R.drawable.moreinfo_arrow);
     }

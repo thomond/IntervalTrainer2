@@ -46,7 +46,7 @@ public class daoTest {
 
             SavedSession sess = new SavedSession();
             sess.init("Test", templ.getId());
-            sess.getSession().addLocations("48.8583,2.2944;48.8583,2.2946;48.8583,2.2970;48.8583,2.2949;");
+            //sess.getSession().addLocations("48.8583,2.2944;48.8583,2.2946;48.8583,2.2970;48.8583,2.2949;");
             for (int i = 0; i <= 5; i++) {
                 sess.addIntervalData(templ.getInterval(i));
                 sess.finaliseInterval();

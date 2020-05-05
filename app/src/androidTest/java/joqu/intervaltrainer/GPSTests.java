@@ -140,7 +140,7 @@ public class GPSTests {
         // Finalise and persist
         mSavedSession.finalise();
 
-        Log.d(this.getClass().getSimpleName(),mSavedSession.getString());
+        Log.d(Const.TAG + this.getClass().getSimpleName(),mSavedSession.getString());
 
 
 

@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.location.Location;
 import android.os.Build;
 import android.util.Log;
 
@@ -64,21 +63,6 @@ import static org.junit.Assert.assertNotEquals;
         List<IntervalData> mData = mAppDao.getAllIntervalData();
         List<Template> mTemplate = mAppDao.getAllTemplates();
         List<Interval> mIntervalTypes = mAppDao.getAllIntervals();
-    }
-
-
-    @Test
-    public void sessionLocationsTest() {
-        Session mSess = new Session(1, System.currentTimeMillis(), System.currentTimeMillis(), "test, test");
-        mSess.locationData ="48.8583,2.2944;48.8583,2.2946;48.8583,2.2970;48.8583,2.2949;";
-        Location l = new Location("test");
-        l.setLatitude(48.8583);
-        l.setLongitude(2.2984);
-        mSess.addLocation(l);
-        for (Location loc:
-        mSess.getLocations()){
-            Log.d(Const.TAG,loc.toString());
-        }
     }
 
     @Test

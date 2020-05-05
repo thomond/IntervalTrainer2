@@ -10,6 +10,7 @@ import androidx.room.PrimaryKey;
 import androidx.annotation.NonNull;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Random;
 
 import joqu.intervaltrainer.Const;
@@ -39,6 +40,9 @@ public class IntervalData {
     @ColumnInfo(name = "session_id")
     public int sessionId;
     public String data; //max speed, avg speed, distance , time taken , geodata, Datetime started, Datetime ended
+    // TODO: move location data into intervaldata from session
+    @ColumnInfo(name = "location_data")
+    public String locationData;
     public long started;
     public long ended;
     public float distance;
@@ -119,12 +123,35 @@ public class IntervalData {
     }
 
     public void addLocation(Location location) {
+        StringBuilder s = new StringBuilder();
+        if(locationData==null) locationData="";
+        locationData += s.append(location.getLatitude()).append(',').append(location.getLongitude()).append(';').toString();
+
         // Calculate distance travelled
-        // FIXME: deal with accuracy issues
         if (mLastLocation != null)
             distance  += location.distanceTo(mLastLocation);
         // add unique speed to list to calculate total average
         addSpeed(location.getSpeed());
         mLastLocation = location;
+    }
+
+    public List<Location> getLocations(){
+        LinkedList<Location> locList = new LinkedList<>();
+        for (String substring :
+                locationData.split(";")) {
+            String points[] = substring.split(",");
+            if (points.length == 2) {
+                Location l = new Location("none");
+                l.setLatitude(Double.valueOf(points[0]));
+                l.setLongitude(Double.valueOf(points[1]));
+                locList.add(l);
+            }
+            else return null;
+        }
+        return locList;
+    }
+
+    public void addLocations(String locations) {
+        locationData = locations;
     }
 }

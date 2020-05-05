@@ -1,12 +1,13 @@
 package joqu.intervaltrainer.model.entities;
 
+import android.location.Location;
+
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
-import android.location.Location;
-import androidx.annotation.NonNull;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -73,6 +74,7 @@ public class Session {
     }
 
     public List<Location> getLocations(){
+
         LinkedList<Location> locList = new LinkedList<>();
         for (String substring :
                 locationData.split(";")) {

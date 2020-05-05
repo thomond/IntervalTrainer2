@@ -1,22 +1,19 @@
 package joqu.intervaltrainer.model;
 
 
-import androidx.sqlite.db.SupportSQLiteDatabase;
+import android.content.Context;
+import android.os.AsyncTask;
+import android.util.Log;
+
+import androidx.annotation.NonNull;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
-import android.content.Context;
-import android.os.AsyncTask;
-import androidx.annotation.NonNull;
-import android.util.Log;
 
-import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.Executor;
 
-import joqu.intervaltrainer.BuildConfig;
 import joqu.intervaltrainer.Const;
 import joqu.intervaltrainer.model.entities.Interval;
 import joqu.intervaltrainer.model.entities.IntervalData;
@@ -84,15 +81,15 @@ public abstract class AppDatabase extends RoomDatabase
                 SessionTemplate templ2 = new SessionTemplate("Long Test Session", "Test", "Test");
                 for (int i = 0; i <= 5; i++) templ2.addInterval(new Random().nextInt(2), 60000*8, i);
                 templ2.saveAll(DB.appDao());
-
-
                 SavedSession sess = new SavedSession();
                 sess.init("Test", templ.getId());
-                sess.getSession().addLocations("48.8583,2.2944;48.8583,2.2946;48.8583,2.2970;48.8583,2.2949;");
+
                 for (int i = 0; i <= 5; i++) {
                     sess.addIntervalData(templ.getInterval(i));
                     sess.finaliseInterval();
                 }
+                sess.addNewLocations("48.8583,2.2944;48.8583,2.2946;48.8583,2.2970;48.8583,2.2949;");
+
                 sess.saveAll(DB.appDao());
 
             } catch (Exception e) {

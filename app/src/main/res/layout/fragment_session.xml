@@ -26,11 +26,6 @@
             android:orientation="vertical"
             android:visibility="visible">
 
-            <View
-                android:id="@+id/view4"
-                android:layout_width="wrap_content"
-                android:layout_height="40dp" />
-
             <org.osmdroid.views.MapView
                 android:id="@+id/SavedSession_map"
                 android:layout_width="fill_parent"
