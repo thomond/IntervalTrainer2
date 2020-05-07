@@ -4,61 +4,69 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/linearLayout"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_margin="20dp">
+    android:layout_height="wrap_content">
 
     <LinearLayout
         android:id="@+id/linearLayout2"
-        android:layout_width="289dp"
+        android:layout_width="match_parent"
         android:layout_height="78dp"
         android:divider="@drawable/sharp_remove_black_36"
         android:orientation="horizontal"
-        android:padding="5dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         tools:layout_editor_absoluteY="0dp">
+<androidx.cardview.widget.CardView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginStart="8dp"
+    android:layout_marginTop="8dp"
+    android:layout_marginEnd="8dp"
+    app:cardCornerRadius="5dp">
+    >
 
+    <TextView
+        android:id="@+id/IntervalItem_type"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="5dp"
+        android:text="-"
+        android:textAlignment="textStart"
+        android:textSize="48sp" />
 
-        <TextView
-            android:id="@+id/IntervalItem_type"
-            android:layout_width="60dp"
-            android:layout_height="match_parent"
-            android:padding="5dp"
-            android:text="-"
-            android:textAlignment="center"
-            android:textSize="48sp" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="horizontal">
 
-            <LinearLayout
+            <TextView
+                android:id="@+id/textView8"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:layout_weight="1"
+                android:padding="5dp"
+                android:text="Time"
+                android:textSize="12sp"
+                android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/textView8"
-                    android:layout_width="80dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:padding="5dp"
-                    android:text="Time"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/IntervalItem_Time"
-                    android:layout_width="139dp"
-                    android:layout_height="wrap_content"
-                    android:padding="5dp"
-                    android:textAlignment="textEnd" />
-
-            </LinearLayout>
-
+            <TextView
+                android:id="@+id/IntervalItem_Time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:textAlignment="textEnd" />
 
         </LinearLayout>
+
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>
+
 
     </LinearLayout>
 

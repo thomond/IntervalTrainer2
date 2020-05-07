@@ -1,4 +1,5 @@
 package joqu.intervaltrainer.ui.fragments;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
@@ -18,7 +19,6 @@ import org.osmdroid.api.IMapController;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
-import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.Polyline;
 
 import java.util.LinkedList;
@@ -52,7 +52,7 @@ public class SavedSessionFragment extends Fragment implements ItemClickListener 
     private TextView sessionPaceText;
     private TextView sessionSpeedText;
     private TextView sessionTitleText;
-    private Polyline mPolyLine;
+    private Polyline mPolyLine; // Polyline to show session progress
 
     public static SavedSessionFragment newInstance() {
         return new SavedSessionFragment();
@@ -112,27 +112,44 @@ public class SavedSessionFragment extends Fragment implements ItemClickListener 
             // Center map on location
             IMapController mapController = mMapView.getController();
             mapController.setZoom(18.0);
+
             // Aquire locations from Intervals and add locations data to map
             List<Location> locations = new LinkedList<>();
+            mPolyLine = new Polyline(mMapView);
+            mPolyLine.getOutlinePaint().setColor(Color.WHITE);
+
             for (IntervalData i :
                     mIntervalData) {
-                locations.addAll(i.getLocations());
-            }
-
-
-            mapController.setCenter(new GeoPoint(locations.get(0)));
-            for (Location l :
-                    locations) {
-                // Add a polyline between each poiunt
-                if(mPolyLine==null) mPolyLine = new Polyline(mMapView);
-                mPolyLine.addPoint(new GeoPoint(l));
+                for (Location l :
+                        i.getLocations()) {
+                    mPolyLine.addPoint(new GeoPoint(l));
+                }
                 mMapView.getOverlayManager().add(mPolyLine);
-
-                Marker marker = new Marker(mMapView);
-                marker.setPosition(new GeoPoint(l));
-                marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
-                mMapView.getOverlayManager().add(marker);
             }
+
+            for (IntervalData i :
+                    mIntervalData) {
+                int type = mViewModel.getIntervalById(i.intervalId).type;
+                Polyline intervalPolyLine = new Polyline(mMapView);  // Extra polyline for each interval to color based on activity type
+                for (Location l :
+                        i.getLocations()) {
+                    intervalPolyLine.addPoint(new GeoPoint(l));
+
+                    // Set color based on interval type
+                    if(type == Const.INTERVAL_TYPE_RUN)
+                        intervalPolyLine.getOutlinePaint().setColor(Color.RED);
+                    else
+                        intervalPolyLine.getOutlinePaint().setColor(Color.BLUE);
+                    //Marker marker = new Marker(mMapView);
+                    //marker.setPosition(new GeoPoint(l));
+                   // marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+                   // mMapView.getOverlayManager().add(marker);
+                    mapController.setCenter(new GeoPoint(l));
+                }
+                mMapView.getOverlayManager().add(intervalPolyLine);
+            }
+
+
 
             // Set session elements
             sessionTitleText.setText(msess.title);

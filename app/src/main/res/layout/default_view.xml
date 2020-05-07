@@ -12,14 +12,14 @@
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="39dp"
         android:background="@color/colorPrimaryDark"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar" />
 
     <FrameLayout
         android:id="@+id/mainContentFrame"
         android:layout_width="match_parent"
-        android:layout_height="674dp"
+        android:layout_height="691dp"
         android:layout_marginBottom="8dp">
         <!-- Layout to contain contents of main body of screen (drawer will slide over this) -->
 
