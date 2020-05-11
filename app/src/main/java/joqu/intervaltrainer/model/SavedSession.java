@@ -31,6 +31,10 @@ public class SavedSession
     private Session mSession;
 
 
+    public LinkedList<IntervalData> getIntervalDataList() {
+        return mIntervalData;
+    }
+
     private LinkedList<IntervalData> mIntervalData;
     private IntervalData mCurrentInterval;
 

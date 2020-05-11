@@ -19,10 +19,11 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.os.Process;
-import androidx.core.app.ActivityCompat;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
+
+import androidx.core.app.ActivityCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -37,11 +38,11 @@ import joqu.intervaltrainer.R;
 import joqu.intervaltrainer.Util;
 import joqu.intervaltrainer.model.AppDao;
 import joqu.intervaltrainer.model.AppDatabase;
-import joqu.intervaltrainer.model.entities.Interval;
 import joqu.intervaltrainer.model.SavedSession;
 import joqu.intervaltrainer.model.SessionTemplate;
+import joqu.intervaltrainer.model.entities.Interval;
 
-import static joqu.intervaltrainer.Const.*;
+import static joqu.intervaltrainer.Const.TAG;
 
 
 public final class LiveSessionService extends Service {
@@ -55,6 +56,8 @@ public final class LiveSessionService extends Service {
     GeoTrackerRunnable mGeoTrackerRunnable;
     // session related objs
     SavedSession mSavedSession;
+
+    Notification.Builder mNotificationBuilder;
 
 
     // Class to deal with session state such as Pause/Resume that are recieved via broadcasts
@@ -120,6 +123,20 @@ public final class LiveSessionService extends Service {
                 intent.putExtra(Const.INTENT_EXTRA_COUNTDOWN_INDEX_INT, mIntervalTimers.indexOf(this)+1);
                 LocalBroadcastManager
                         .getInstance(getApplicationContext()).sendBroadcast(intent);
+
+                // Update notification for service
+                mNotificationBuilder.setContentTitle("Part " + mSavedSession.getCurrentInterval().step+1 + " of " + mSessionTemplate.getIntervals().size());
+                mNotificationBuilder.setContentText(Util.millisToTimeFormat(Long.valueOf(millisUntilFinished), "mm:ss") + " remaining");
+                if (Build.VERSION.SDK_INT >= 26) {
+                    startForeground(0, mNotificationBuilder.build());
+                }
+                else {
+                    // Request system to show notification
+                    NotificationManager notificationManager =
+                            (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                    notificationManager.notify(0, mNotificationBuilder.build());
+                }
+
                 Log.d(TAG,"Data broadcast from "+ this.hashCode()  + ": "+millisUntilFinished);
                 lastTick = millisUntilFinished;
             }
@@ -188,7 +205,7 @@ public final class LiveSessionService extends Service {
                     intent.setAction(Const.BROADCAST_GPS_UPDATE);
                     intent.putExtra(Const.INTENT_EXTRA_GPS_LONG_DOUBLE, location.getLongitude());
                     intent.putExtra(Const.INTENT_EXTRA_GPS_LAT_DOUBLE, location.getLatitude());
-                    intent.putExtra(Const.INTENT_EXTRA_GPS_DIST_FLOAT,mSavedSession.getCurrentInterval().distance);
+                    intent.putExtra(Const.INTENT_EXTRA_GPS_DIST_FLOAT, mSavedSession.getCurrentInterval().distance);
                     intent.putExtra(Const.INTENT_EXTRA_GPS_SPEED_FLOAT, location.getSpeed());
 
 
@@ -369,6 +386,7 @@ public final class LiveSessionService extends Service {
         // Request system to stop notification
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
         notificationManager.cancel(0 );
         stopSelf();
     }
@@ -390,9 +408,7 @@ public final class LiveSessionService extends Service {
         LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(mServiceStateReciever,intentFilter);
 
 
-        // TODO: Friday 6 March 2020 22:29:55 GMT Add intents to notification to allow fir interaction
-
-        Notification notification;
+        // TODO: Friday 6 March 2020 22:29:55 GMT Add intents to notification to allow for interaction
 
         // For later SDKs use a foreground service
         if (Build.VERSION.SDK_INT >= 26){
@@ -402,23 +418,24 @@ public final class LiveSessionService extends Service {
             getSystemService(NotificationManager.class).createNotificationChannel(channel);
 
             // Build a notification for a running session
-            notification = new Notification.Builder(this,channel.getId())
+            mNotificationBuilder = new Notification.Builder(this,channel.getId())
                     .setSmallIcon(R.mipmap.ic_launcher)
                     .setContentTitle("Session active")
-                    .setContentText("Session Active").build();
+                    .setContentText("Session Active");
 
-            startForeground(1, notification);
+            startForeground(0, mNotificationBuilder.build());
         }else{
             // Build a notification for a running session
-             notification = new Notification.Builder(this)
+             mNotificationBuilder = new Notification.Builder(this)
                     .setSmallIcon(R.mipmap.ic_launcher)
                     .setContentTitle("Session active")
-                    .setContentText("Session Active").build();
+                    .setContentText("Session Active");
 
             // Request system to show notification
             NotificationManager notificationManager =
                     (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-            notificationManager.notify(0, notification);
+            notificationManager.notify(0, mNotificationBuilder.build());
+
         }
 
 

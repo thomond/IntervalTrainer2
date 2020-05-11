@@ -160,7 +160,7 @@ public class MainActivity extends AppCompatActivity implements OnRequestPermissi
         FragmentTransaction mFragTransaction = fragmentManager.beginTransaction();
         if(fragmentBundle!=null) f.setArguments(fragmentBundle);
         mFragTransaction.replace(rid,f);
-        mFragTransaction.commit();
+        mFragTransaction.commitNow();
     }
 
 

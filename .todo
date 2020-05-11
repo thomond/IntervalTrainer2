@@ -1,6 +1,12 @@
-TODO: Session list RecyclerView overflows past screen
-TODO:  GPS co-ords float shoud be formatted to 2 decimal point
-TODO:  Ditto Distance, speed in recyclers
-TODO: Toolbar -> back btn
-TODO: chnage debug test sessions to force time >0
-TODO: move location data into intervaldata from session
+TODO
+  Session list RecyclerView overflows past screen
+  Toolbar -> back btn
+  MapView:
+    add star and end markors
+    remove locations markers for live session
+    add popup info containing interval info
+✅ GPS co-ords float shoud be formatted to 2 decimal point
+✅ Ditto Distance, speed in recyclers
+✅ chnage debug test sessions to force time >0
+✅ move location data into intervaldata from session
+✅ Notification updates with countdown and interval number

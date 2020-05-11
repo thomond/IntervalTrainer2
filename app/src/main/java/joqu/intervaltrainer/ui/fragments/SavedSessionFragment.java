@@ -157,9 +157,9 @@ public class SavedSessionFragment extends Fragment implements ItemClickListener 
             long time = Util.millisBetween(msess.started, msess.ended);
 
             sessionTimeText.setText(Util.millisToTimeFormat(time, "mm:ss"));
-            sessionDistanceText.setText(String.format(Locale.getDefault(), "%.2f", msess.distance));
-            sessionSpeedText.setText(String.format(Locale.getDefault(), "%d m/s", msess.avgSpeed));
-            sessionPaceText.setText(String.format(Locale.getDefault(), "%d sec/m", msess.pace));
+            sessionDistanceText.setText(String.format(Locale.getDefault(), "%d", msess.distance));
+            sessionSpeedText.setText(String.format(Locale.getDefault(), "%d", msess.avgSpeed));
+            sessionPaceText.setText(String.format(Locale.getDefault(), "%d", msess.pace));
 
             // Populate recycler for IntervalData items
             final IntervalDataAdapter mAdapter = new IntervalDataAdapter(getContext());

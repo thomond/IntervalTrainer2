@@ -75,7 +75,13 @@ public abstract class AppDatabase extends RoomDatabase
     public static Boolean populateDB() {
             try {
                 SessionTemplate templ = new SessionTemplate("Debug Test Session", "Test", "Test");
-                for (int i = 0; i <= 5; i++) templ.addInterval(new Random().nextInt(2), new Random().nextInt(10) * 1000, i);
+                for (int i = 0; i <= 5; i++){
+                    if(i%2==0)
+                        templ.addInterval(0, 2000*10 , i);
+                    else
+                        templ.addInterval(1, 2000*10 , i);
+                }
+
                 templ.saveAll(DB.appDao());
 
                 SessionTemplate templ2 = new SessionTemplate("Long Test Session", "Test", "Test");

@@ -1,12 +1,13 @@
 package joqu.intervaltrainer.ui.adapters;
 
 import android.content.Context;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.Collections;
 import java.util.List;
@@ -107,9 +108,9 @@ public class SessionListAdapter extends RecyclerView.Adapter<SessionListAdapter.
                 String formattedTime = Util.millisToTimeFormat(timeLength,"mm:ss");
                 mViewHolder.sessionListItem_time.setText(formattedTime);
 
-                mViewHolder.sessionListItem_distance.setText(String.format(Locale.getDefault(),"%.2f m",mSessionList.get(i).distance));
-                mViewHolder.sessionListItem_pace.setText(String.format(Locale.getDefault(),"%d secs/m",mSessionList.get(i).pace));
-                mViewHolder.sessionListItem_avgSpeed.setText(String.format(Locale.getDefault(),"%d secs/m",mSessionList.get(i).avgSpeed));
+                mViewHolder.sessionListItem_distance.setText(String.format(Locale.getDefault(),"%d",mSessionList.get(i).distance));
+                mViewHolder.sessionListItem_pace.setText(String.format(Locale.getDefault(),"%d",mSessionList.get(i).pace));
+                mViewHolder.sessionListItem_avgSpeed.setText(String.format(Locale.getDefault(),"%d",mSessionList.get(i).avgSpeed));
                 //mViewHolder.sessionListItem_id.setText(mSessionList.get(i).id);
 
             } catch (Exception e) {

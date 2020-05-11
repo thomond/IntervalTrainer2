@@ -13,6 +13,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         app:cardCornerRadius="5dp">
+
         <TableLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -41,7 +42,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="5dp"
-                    android:text="Total Time   "
+                    android:text="Total Time"
                     android:textAlignment="viewStart"
                     android:textSize="12sp"
                     android:textStyle="bold" />
@@ -49,10 +50,10 @@
                 <TextView
                     android:id="@+id/templateListItem_time"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:padding="5dp"
-                    android:textAlignment="viewStart" />
+                    android:textAlignment="viewEnd" />
             </TableRow>
 
             <TableRow
@@ -63,10 +64,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="5dp"
-                    android:text="Distance  "
+                    android:text="Distance"
                     android:textAlignment="viewStart"
                     android:textSize="12sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:visibility="gone"/>
 
                 <TextView
                     android:id="@+id/templateListItem_distance"
@@ -74,7 +76,7 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:padding="5dp"
-                    android:textAlignment="textStart" />
+                    android:textAlignment="viewEnd" />
 
             </TableRow>
 

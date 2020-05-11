@@ -26,7 +26,7 @@
 
         <Space
             android:layout_width="wrap_content"
-            android:layout_height="20dp"
+            android:layout_height="10dp"
 
             android:layout_weight="1" />
 
@@ -52,12 +52,11 @@
             android:layout_gravity="center"
             android:text="Stop"
             android:textAlignment="center"
-            android:visibility="visible" />
+            android:visibility="gone" />
 
         <Space
             android:layout_width="wrap_content"
-            android:layout_height="20dp
-"
+            android:layout_height="10dp"
             android:layout_weight="1" />
 
         <TextView
@@ -90,7 +89,7 @@
 
                 <TextView
                     android:id="@+id/textView12"
-                    style="?android:attr/listSeparatorTextViewStyle"
+                    style="@style/TitleMod1"
                     android:layout_width="275dp"
                     android:layout_height="wrap_content"
                     android:capitalize="none"
@@ -166,7 +165,7 @@
                         android:padding="5dp"
                         android:text=" ⚡ Speed "
                         android:textAlignment="textStart"
-                        android:textSize="16sp" />
+                        android:textSize="14sp" />
 
                     <TextView
                         android:id="@+id/liveSession_speed"
@@ -178,7 +177,14 @@
                         android:text="0 "
                         android:textAlignment="textEnd"
                         android:textSize="14sp" />
+
+                    <TextView
+                        android:textAppearance="@style/TabColSubtitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="m/s" />
                 </LinearLayout>
+
 
             </LinearLayout>
 
@@ -201,7 +207,7 @@
 
                 <TextView
                     android:id="@+id/textView"
-                    style="?android:attr/listSeparatorTextViewStyle"
+                    style="@style/TitleMod1"
                     android:layout_width="243dp"
                     android:layout_height="wrap_content"
                     android:capitalize="none"
@@ -274,7 +280,7 @@
                         android:padding="5dp"
                         android:text=" 🕛 Time Left "
                         android:textAlignment="textStart"
-                        android:textSize="16sp" />
+                        android:textSize="14sp" />
 
                     <TextView
                         android:id="@+id/liveSessionInterval_countdown"
@@ -286,6 +292,12 @@
                         android:text="0"
                         android:textAlignment="textEnd"
                         android:textSize="14sp" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/TabColSubtitle"
+                        android:text="s"
+                        />
                 </LinearLayout>
 
                 <LinearLayout
@@ -301,7 +313,7 @@
                         android:padding="5dp"
                         android:text=" 📏 Distance "
                         android:textAlignment="textStart"
-                        android:textSize="16sp" />
+                        android:textSize="14sp" />
 
                     <TextView
                         android:id="@+id/liveSession_distance"
@@ -313,6 +325,12 @@
                         android:text="0"
                         android:textAlignment="textEnd"
                         android:textSize="14sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/TabColSubtitle"
+                        android:text="m" />
 
                 </LinearLayout>
 

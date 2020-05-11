@@ -46,7 +46,7 @@ public class IntervalData {
     public String locationData;
     public long started;
     public long ended;
-    public float distance;
+    public int distance;
 
 
 
@@ -54,12 +54,12 @@ public class IntervalData {
     private Location mLastLocation =null;
     @Ignore
     // Collection of speeds collected to be averaged out at finalization
-    LinkedList<Float> mSpeeds = new LinkedList<Float>();
+    LinkedList<Integer> mSpeeds = new LinkedList<Integer>();
     @ColumnInfo(name = "avg_speed")
-    public float avgSpeed;
+    public int avgSpeed;
     @ColumnInfo(name = "fastest_speed")
-    public float fastestSpeed;
-    public float pace;
+    public int fastestSpeed;
+    public int pace;
 
 
 
@@ -109,15 +109,15 @@ public class IntervalData {
     }
 
     @Ignore
-    public void addSpeed(float speed) {
+    public void addSpeed(int speed) {
         this.mSpeeds.add(speed);
     }
 
     @Ignore
-    public float getAvgSpeed() {
+    public int getAvgSpeed() {
         if (mSpeeds.isEmpty()) return 0;
-        float total = 0;
-        for (float s : mSpeeds){
+        int total = 0;
+        for (int s : mSpeeds){
             total += s;
         }
         return total/mSpeeds.size();
@@ -131,8 +131,9 @@ public class IntervalData {
         // Calculate distance travelled
         if (mLastLocation != null)
             distance  += location.distanceTo(mLastLocation);
+
         // add unique speed to list to calculate total average
-        addSpeed(location.getSpeed());
+        addSpeed(Math.round(location.getSpeed()));
         mLastLocation = location;
     }
 

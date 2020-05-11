@@ -1,18 +1,19 @@
 package joqu.intervaltrainer.ui.fragments;
 
-import androidx.lifecycle.ViewModelProviders;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
@@ -21,8 +22,8 @@ import joqu.intervaltrainer.Util;
 import joqu.intervaltrainer.model.entities.Interval;
 import joqu.intervaltrainer.model.entities.Template;
 import joqu.intervaltrainer.ui.AppViewModel;
-import joqu.intervaltrainer.ui.adapters.IntervalAdapter;
 import joqu.intervaltrainer.ui.ItemClickListener;
+import joqu.intervaltrainer.ui.adapters.IntervalAdapter;
 import joqu.intervaltrainer.ui.adapters.TemplateListAdapter;
 
 import static android.content.ContentValues.TAG;
@@ -52,7 +53,7 @@ public class TemplateFragment extends Fragment implements ItemClickListener, Vie
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-       View v = inflater.inflate(R.layout.fragment_template, container, false);
+        View v = inflater.inflate(R.layout.fragment_template, container, false);
         mViewModel = ViewModelProviders.of(this).get(AppViewModel.class);
         templateListRecyclerView = v.findViewById(R.id.templateListRecyclerView);
         mTemplateView = v.findViewById(R.id.templateView);
@@ -67,10 +68,11 @@ public class TemplateFragment extends Fragment implements ItemClickListener, Vie
 
         showTemplateList();
 
-
-
+        MainActivity a = (MainActivity) getActivity();
+        a.getSupportActionBar().setTitle("Test");
         return v;
     }
+
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -81,6 +83,10 @@ public class TemplateFragment extends Fragment implements ItemClickListener, Vie
     }
 
     private void showTemplateList(){
+
+
+
+
         mTemplateListView.setVisibility(View.VISIBLE);
         mTemplateView.setVisibility(View.GONE);
         // Populate recycler for  items

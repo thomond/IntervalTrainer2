@@ -1,161 +1,219 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="match_parent">
 
-    <TableLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="15dp"
-        android:layout_weight="@dimen/cardview_compat_inset_shadow"
-        android:padding="5dp"
-        tools:layout_editor_absoluteX="8dp">
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:orientation="vertical">
 
-        <TableRow
+        <TextView
+            android:id="@+id/sessionListItem_name"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            android:padding="10dp"
+            android:text="Name"
+            android:textAppearance="@style/TitleMod1" />
 
-            <TextView
-                android:id="@+id/sessionListItem_name"
-                android:layout_width="377dp"
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginEnd="10dp"
+            android:padding="5dp"
+            android:layout_gravity="center_horizontal"
+            app:cardCornerRadius="5dp">
+
+
+
+            <TableLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="5dp"
-                android:text="Name"
-                android:textAppearance="@style/TextAppearance.AppCompat.Title" />
+                android:layout_margin="15dp"
+                android:layout_weight="@dimen/cardview_compat_inset_shadow"
 
-        </TableRow>
+                tools:layout_editor_absoluteX="8dp">
 
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <TextView
-                android:id="@+id/sessionListItem_date"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:lineSpacingExtra="10sp"
-                android:padding="5dp"
-                android:text="Date"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                android:typeface="normal"
-                android:visibility="invisible" />
-        </TableRow>
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="100dp"
-                    android:layout_height="wrap_content"
-                    android:padding="5dp"
-                    android:text="Time "
-                    android:textAlignment="viewStart"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/sessionListItem_time"
+                <TableRow
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:padding="5dp"
-                    android:textAlignment="textEnd" />
-            </LinearLayout>
-        </TableRow>
+                    android:layout_height="match_parent">
 
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+                </TableRow>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="100dp"
-                    android:layout_height="wrap_content"
-                    android:padding="5dp"
-                    android:text="Distance  "
-                    android:textAlignment="viewStart"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/sessionListItem_distance"
+                <TableRow
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:padding="5dp"
-                    android:textAlignment="textEnd" />
-            </LinearLayout>
-        </TableRow>
+                    android:layout_height="match_parent">
 
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+                    <TextView
+                        android:id="@+id/sessionListItem_date"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:lineSpacingExtra="10sp"
+                        android:padding="5dp"
+                        android:text="Date"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                        android:typeface="normal"
+                        android:visibility="gone" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
+                </TableRow>
 
-                <TextView
-                    android:layout_width="100dp"
-                    android:layout_height="match_parent"
-                    android:padding="5dp"
-                    android:text="Pace  "
-                    android:textAlignment="viewStart"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/sessionListItem_pace"
+                <TableRow
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:padding="5dp"
-                    android:textAlignment="textEnd" />
-            </LinearLayout>
-        </TableRow>
+                    android:layout_height="match_parent">
 
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="5dp"
+                        android:text="Total Time "
+                        android:textAlignment="viewStart"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
+                    <TextView
+                        android:id="@+id/sessionListItem_time"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:padding="5dp"
+                        android:textAlignment="textEnd" />
 
-                <TextView
-                    android:layout_width="100dp"
-                    android:layout_height="match_parent"
-                    android:padding="5dp"
-                    android:text="Speed  "
-                    android:textAlignment="viewStart"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
+                    <Space
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
 
-                <TextView
-                    android:id="@+id/sessionListItem_speed"
+                    <Space
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+
+
+                </TableRow>
+
+                <TableRow
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:padding="5dp"
-                    android:textAlignment="textEnd" />
-            </LinearLayout>
-        </TableRow>
+                    android:layout_height="match_parent">
 
-    </TableLayout>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="5dp"
+                        android:text="Distance"
+                        android:textAlignment="viewStart"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+                    <TextView
+                        android:id="@+id/sessionListItem_distance"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:minWidth="70dp"
+                        android:padding="5dp"
+                        android:textAlignment="textEnd" />
+
+                    <TextView
+                        android:textAppearance="@style/TabColSubtitle"
+                        android:text="m" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="5dp"
+                        android:text="Distance  "
+                        android:textAlignment="viewStart"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:visibility="invisible"
+                        />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:padding="5dp"
+                        android:minWidth="70dp"
+                        android:textAlignment="textEnd" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:padding="5dp"
+                        android:text="s/m"
+                        android:visibility="invisible"
+                        android:textAlignment="textStart" />
+
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="5dp"
+                        android:text="Avg. Speed"
+                        android:textAlignment="viewStart"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/sessionListItem_speed"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:minWidth="70dp"
+                        android:padding="5dp"
+                        android:textAlignment="textEnd" />
+
+                    <TextView
+                        android:textAppearance="@style/TabColSubtitle"
+                        android:text="m/s" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="5dp"
+                        android:text="Avg. Pace"
+                        android:textAlignment="viewStart"
+
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/sessionListItem_pace"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:minWidth="70dp"
+                        android:padding="5dp"
+                        android:textAlignment="textEnd" />
+
+                    <TextView
+                        android:textAppearance="@style/TabColSubtitle"
+                        android:text="s/m" />
+                </TableRow>
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+
+
+                </TableRow>
+            </TableLayout>
+
+        </androidx.cardview.widget.CardView>
+
+
+
+    </LinearLayout>
+
+</FrameLayout>
