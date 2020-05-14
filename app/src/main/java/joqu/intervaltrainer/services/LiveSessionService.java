@@ -51,6 +51,7 @@ public final class LiveSessionService extends Service {
     private AppDatabase DB;
     // Template objs for session to be based on
     SessionTemplate mSessionTemplate;
+    private int mIntervalIndex;
     // Thread workers
     CountdownRunnable mCountdownRunnable;
     GeoTrackerRunnable mGeoTrackerRunnable;
@@ -81,6 +82,7 @@ public final class LiveSessionService extends Service {
     private AppDao mDao;
 
 
+
     private class CountdownRunnable implements Runnable {
         LinkedList<IntervalTimer> mIntervalTimers = new LinkedList<>();
         IntervalTimer mIntervalTimer;
@@ -106,9 +108,9 @@ public final class LiveSessionService extends Service {
 
             public CountDownTimer startTimer(){
 
-                int index = mIntervalTimers.indexOf(this);
-                type = mSessionTemplate.getInterval(index).type;
-                mSavedSession.addIntervalData(mSessionTemplate.getInterval(index));
+                mIntervalIndex = mIntervalTimers.indexOf(this);
+                type = mSessionTemplate.getInterval(mIntervalIndex).type;
+                serviceHandler.handleMessage(Message.obtain(serviceHandler,Const.MESSAGE_INTERVAL_START));
                 return start();
             }
 
@@ -125,35 +127,30 @@ public final class LiveSessionService extends Service {
                         .getInstance(getApplicationContext()).sendBroadcast(intent);
 
                 // Update notification for service
-                mNotificationBuilder.setContentTitle("Part " + mSavedSession.getCurrentInterval().step+1 + " of " + mSessionTemplate.getIntervals().size());
-                mNotificationBuilder.setContentText(Util.millisToTimeFormat(Long.valueOf(millisUntilFinished), "mm:ss") + " remaining");
-                if (Build.VERSION.SDK_INT >= 26) {
-                    startForeground(0, mNotificationBuilder.build());
-                }
-                else {
-                    // Request system to show notification
-                    NotificationManager notificationManager =
-                            (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-                    notificationManager.notify(0, mNotificationBuilder.build());
-                }
+                mNotificationBuilder
+                        .setContentTitle("Interval " + (mIntervalIndex + 1) + " of " + mSessionTemplate.getIntervals().size());
+                mNotificationBuilder
+                        .setContentText(Util.millisToTimeFormat(Long.valueOf(millisUntilFinished), "mm:ss") + " remaining");
+                // Request system to show notification
+                NotificationManager notificationManager =
+                        (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                notificationManager.notify(1, mNotificationBuilder.build());
 
                 Log.d(TAG,"Data broadcast from "+ this.hashCode()  + ": "+millisUntilFinished);
                 lastTick = millisUntilFinished;
             }
 
             public void onFinish() {
+                // Broadcast end of interval to handler and recievers
                 Log.d(TAG,"Timer " + this.hashCode() + " Ended.");
-                Intent intent = new Intent();
-                intent.setAction(Const.BROADCAST_COUNTDOWN_DONE);
+                serviceHandler.handleMessage(Message.obtain(serviceHandler,Const.MESSAGE_INTERVAL_DONE ));
                 LocalBroadcastManager
-                        .getInstance(getApplicationContext()).sendBroadcast(intent);
+                        .getInstance(getApplicationContext()).sendBroadcast(new  Intent().setAction(Const.BROADCAST_COUNTDOWN_DONE));
 
-                int index = mIntervalTimers.indexOf(this);
-                // Finalise the interval data
-                mSavedSession.finaliseInterval();
                 // Pop the list and start next timer
-                if( !mIntervalTimers.isEmpty() && index < mIntervalTimers.size()-1){
-                    mIntervalTimer = mIntervalTimers.get(index+1);
+                if( !mIntervalTimers.isEmpty() && mIntervalIndex < mIntervalTimers.size()-1){
+
+                    mIntervalTimer = mIntervalTimers.get(mIntervalIndex+1);
                     mIntervalTimer.startTimer();
                 }else{
                     // Session is over, inform handler
@@ -171,10 +168,9 @@ public final class LiveSessionService extends Service {
                 // Wait for data to be retrieved from DB
                 while (!mSessionTemplate.hasTemplate())
                     Thread.sleep(200);
-
+                serviceHandler.handleMessage(Message.obtain(serviceHandler,Const.MESSAGE_SESSION_START));
 
                 for (Interval mInterval : mSessionTemplate.getIntervals()) {
-                    // FIXME: decode time
                     long millisFinished = mInterval.time;
                     // push a new timer to the list
                     mIntervalTimers.push(new IntervalTimer(millisFinished, Const.TIMER_COUNTDOWN_INTERVAL_LONG));
@@ -182,6 +178,8 @@ public final class LiveSessionService extends Service {
                 // Start the first countdown and grab the first intervaldata record obj
                 mIntervalTimer = mIntervalTimers.getFirst();
                 mIntervalTimer.startTimer();
+
+
 
             }catch (InterruptedException e) { e.printStackTrace();}
             catch (NullPointerException e) { Log.e(TAG,"NULL value Encountered: ");e.printStackTrace();}
@@ -199,13 +197,13 @@ public final class LiveSessionService extends Service {
                 for (Location location : locationResult.getLocations()) {
                     // Add location to saved session
                     mSavedSession.addNewLocation(location);
-
                     // broadcast  location data
                     Intent intent = new Intent();
                     intent.setAction(Const.BROADCAST_GPS_UPDATE);
                     intent.putExtra(Const.INTENT_EXTRA_GPS_LONG_DOUBLE, location.getLongitude());
                     intent.putExtra(Const.INTENT_EXTRA_GPS_LAT_DOUBLE, location.getLatitude());
                     intent.putExtra(Const.INTENT_EXTRA_GPS_DIST_FLOAT, mSavedSession.getCurrentInterval().distance);
+                    intent.putExtra(Const.INTENT_EXTRA_GPS_TOTAL_DIST_FLOAT, mSavedSession.getTotalDistance());
                     intent.putExtra(Const.INTENT_EXTRA_GPS_SPEED_FLOAT, location.getSpeed());
 
 
@@ -302,7 +300,42 @@ public final class LiveSessionService extends Service {
                         mSavedSession.finalise();
                         // Do insert
                         mSavedSession.saveAll(mDao);
+                        ServiceTTSManager.speak("Session Finished","end");
+                        Thread.sleep(1000);// to ensure the above is spoken
+
                         stop();
+                        break;
+                    }
+                    case Const.MESSAGE_SESSION_START:{
+                        // Wait for data read
+                        while(!mSessionTemplate.hasTemplate()) Thread.sleep(200);
+
+                        ServiceTTSManager.speak("Session Begins","end");
+                        // init member objects for saved data
+                        mSavedSession = new SavedSession();
+                        mSavedSession.init(mSessionTemplate.getName(), mSessionTemplate.getId());
+                        break;
+                    }
+                    case Const.MESSAGE_INTERVAL_START: {
+
+                        mSavedSession.addIntervalData(mSessionTemplate.getInterval(mIntervalIndex));
+                        switch(mSessionTemplate.getInterval(mIntervalIndex).type){
+                            case Const.INTERVAL_TYPE_WALK:
+                                ServiceTTSManager.speak("Start Walking","start-walk");
+                                break;
+                            case Const.INTERVAL_TYPE_RUN:
+                                ServiceTTSManager.speak("Start Running","start-run");
+                                break;
+                        }
+
+                        break;
+                    }
+                    case Const.MESSAGE_INTERVAL_DONE: {
+                        // Finalise the interval data
+                        mSavedSession.finaliseInterval();
+                        break;
+                    }
+                    case Const.MESSAGE_TICK: {
                         break;
                     }
                     default:   Log.e(TAG, "Message not Recognized: "+msg.what); break;
@@ -335,13 +368,6 @@ public final class LiveSessionService extends Service {
             if(  recvedTemplateName != null)
                 mSessionTemplate.getFromDB(mDao, recvedTemplateName);
             else mSessionTemplate.getFromDB(mDao, recvedTemplateId);
-
-            // Wait for data read
-            while(!mSessionTemplate.hasTemplate()) Thread.sleep(200);
-
-            // init member objects for saved data
-            mSavedSession = new SavedSession();
-            mSavedSession.init("Session on: " + Util.getDateStr("EEE, d MMM yyyy HH:mm"), mSessionTemplate.getId());
 
             HandlerThread thread = new HandlerThread("ServiceStartArguments",Process.THREAD_PRIORITY_BACKGROUND);
             thread.start();
@@ -413,29 +439,31 @@ public final class LiveSessionService extends Service {
         // For later SDKs use a foreground service
         if (Build.VERSION.SDK_INT >= 26){
             // Register new notification channel
-            NotificationChannel channel = new NotificationChannel(getString(R.string.app_name), "IntervalTrainer Channel", NotificationManager.IMPORTANCE_DEFAULT);
+            NotificationChannel channel = new NotificationChannel(getString(R.string.app_name), "IntervalTrainer Channel", NotificationManager.IMPORTANCE_NONE);
             channel.setDescription("IntervalTrainer Channel");
             getSystemService(NotificationManager.class).createNotificationChannel(channel);
 
             // Build a notification for a running session
-            mNotificationBuilder = new Notification.Builder(this,channel.getId())
+            mNotificationBuilder =  new Notification.Builder(this,channel.getId())
                     .setSmallIcon(R.mipmap.ic_launcher)
                     .setContentTitle("Session active")
                     .setContentText("Session Active");
-
-            startForeground(0, mNotificationBuilder.build());
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            startForeground(1, mNotificationBuilder.build());
         }else{
             // Build a notification for a running session
              mNotificationBuilder = new Notification.Builder(this)
                     .setSmallIcon(R.mipmap.ic_launcher)
                     .setContentTitle("Session active")
                     .setContentText("Session Active");
-
             // Request system to show notification
             NotificationManager notificationManager =
                     (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-            notificationManager.notify(0, mNotificationBuilder.build());
-
+            notificationManager.notify(1, mNotificationBuilder.build());
         }
 
 

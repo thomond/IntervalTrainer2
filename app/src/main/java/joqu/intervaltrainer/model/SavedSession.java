@@ -127,7 +127,7 @@ public class SavedSession
     public void init(String title, int templateID){
         mSession.templateId = templateID;
         mSession.started = Util.getDateLong();
-        mSession.title = title; //"Session on: " + new SimpleDateFormat("EEE, d MMM yyyy
+        mSession.title = title;
     }
 
     // Performs session final calculations and persists all interval data to DB
@@ -174,6 +174,12 @@ public class SavedSession
         mIntervalData.addLast(mCurrentInterval);
 
 
+    }
+
+    // Returns total session ditance as float
+    public float getTotalDistance()
+    {
+        return mSession.distance;
     }
 
     public String getString(){

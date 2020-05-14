@@ -1,12 +1,13 @@
 package joqu.intervaltrainer.ui;
 
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.util.Log;
+
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import joqu.intervaltrainer.Const;
 import joqu.intervaltrainer.model.LiveSession;
@@ -48,8 +49,8 @@ public class LiveSessionBroadcastReceiver extends BroadcastReceiver {
         if (action == BROADCAST_GPS_UPDATE) {
             Double lLat = intent.getDoubleExtra(INTENT_EXTRA_GPS_LAT_DOUBLE, -1);
             Double lLong = intent.getDoubleExtra(INTENT_EXTRA_GPS_LONG_DOUBLE,-1);
-            float lDist = intent.getFloatExtra(INTENT_EXTRA_GPS_DIST_FLOAT,0);
-            float lSpeed = intent.getFloatExtra(INTENT_EXTRA_GPS_SPEED_FLOAT,0);
+            float lDist = intent.getFloatExtra(INTENT_EXTRA_GPS_DIST_FLOAT,0.0f);
+            float lSpeed = intent.getFloatExtra(INTENT_EXTRA_GPS_SPEED_FLOAT,0f);
             LiveSession liveSession = mLiveSession.getValue();
             Location lLocation = new Location("local");
             lLocation.setLatitude(lLat);

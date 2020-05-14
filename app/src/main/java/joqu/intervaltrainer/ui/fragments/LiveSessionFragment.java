@@ -1,31 +1,25 @@
 package joqu.intervaltrainer.ui.fragments;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.fragment.app.FragmentActivity;
-import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.ViewModelProviders;
-
-import android.app.Notification;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-
 import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import com.google.android.gms.dynamic.SupportFragmentWrapper;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
@@ -33,16 +27,15 @@ import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 
-import java.util.Objects;
-
 import joqu.intervaltrainer.BuildConfig;
 import joqu.intervaltrainer.Const;
-import joqu.intervaltrainer.services.LiveSessionService;
 import joqu.intervaltrainer.R;
+import joqu.intervaltrainer.services.LiveSessionService;
 import joqu.intervaltrainer.ui.AppViewModel;
 import joqu.intervaltrainer.ui.LiveSessionObserver;
 
-import static androidx.appcompat.app.AlertDialog.*;
+import static androidx.appcompat.app.AlertDialog.Builder;
+import static androidx.appcompat.app.AlertDialog.OnClickListener;
 import static joqu.intervaltrainer.Const.BROADCAST_SVC_STARTED;
 import static joqu.intervaltrainer.Const.BROADCAST_SVC_STOPPED;
 import static joqu.intervaltrainer.ui.fragments.MainActivity.switchFragment;
@@ -211,7 +204,7 @@ public class LiveSessionFragment extends Fragment {
         mAppViewModel.getLiveSession().observe(this, mLiveSessionObserver);
 
         // Get map view and set
-        mMapView =  lView.findViewById(R.id.liveSession_map);
+        mMapView =  lView.findViewById(R.id.Session_map);
         mMapView.setTileSource(TileSourceFactory.OpenTopo);
         // Center map on location
         IMapController mapController = mMapView.getController();
@@ -228,14 +221,14 @@ public class LiveSessionFragment extends Fragment {
                 if (!mServiceIsRunning) startService();
                 else {
 
-                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    Builder builder = new Builder(getActivity());
                     builder.setMessage(R.string.LiveSessionConfirm);
                     builder.setPositiveButton(R.string.ok, new OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     if (mServiceIsRunning) stopService();
                                     // go back to main screen
-                                    MainActivity.switchFragment(MainFragment.newInstance(),R.id.mainContentFrame,getActivity().getSupportFragmentManager());
+                                    switchFragment(MainFragment.newInstance(),R.id.mainContentFrame,getActivity().getSupportFragmentManager());
                                 }
                             }
                     );

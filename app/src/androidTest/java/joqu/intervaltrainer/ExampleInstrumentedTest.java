@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.util.Log;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
@@ -26,6 +28,7 @@ import joqu.intervaltrainer.model.entities.Template;
 import joqu.intervaltrainer.services.LiveSessionService;
 import joqu.intervaltrainer.services.ServiceTTSManager;
 
+import static android.content.Context.VIBRATOR_SERVICE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
@@ -36,7 +39,7 @@ import static org.junit.Assert.assertNotEquals;
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
 @RunWith(AndroidJUnit4.class)
- class ExampleInstrumentedTest {
+public class ExampleInstrumentedTest {
     private boolean passed;
 
     @Test
@@ -205,13 +208,23 @@ import static org.junit.Assert.assertNotEquals;
             }
         }
         ServiceTTSManager.speak("Hello, World","test");
-        /*while(ServiceTTSManager.isSpeaking()) {
+        while(ServiceTTSManager.isSpeaking()) {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-        }*/
+        }
         return;
+    }
+
+    @Test
+    public void vibrateTest(){
+        Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        if (Build.VERSION.SDK_INT >= 26) {
+            ((Vibrator) appContext.getSystemService(VIBRATOR_SERVICE)).vibrate(VibrationEffect.createOneShot(150, VibrationEffect.DEFAULT_AMPLITUDE));
+        } else {
+            ((Vibrator) appContext.getSystemService(VIBRATOR_SERVICE)).vibrate(150);
+        }
     }
 }

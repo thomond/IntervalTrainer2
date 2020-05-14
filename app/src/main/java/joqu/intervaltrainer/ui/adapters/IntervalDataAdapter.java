@@ -51,7 +51,7 @@ public class IntervalDataAdapter extends RecyclerView.Adapter<IntervalDataAdapte
     @Override
     public IntervalDataViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         // Get the  Recycler View from layout and add it to a new Holder
-        View itemView = mLayoutInflater.inflate(R.layout.recycler_interval_data, viewGroup, false);
+        View itemView = mLayoutInflater.inflate(R.layout.view_interval_data, viewGroup, false);
         return new IntervalDataViewHolder(itemView);
     }
 

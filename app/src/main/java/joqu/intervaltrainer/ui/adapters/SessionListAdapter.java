@@ -32,7 +32,7 @@ public class SessionListAdapter extends RecyclerView.Adapter<SessionListAdapter.
     public class SessionListHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         // Viewholder items go here
         private final TextView sessionListItem_name;
-        private final TextView sessionListItem_date;
+        //private final TextView sessionListItem_date;
         //private final TextView sessionListItem_id;
         private final TextView sessionListItem_time;
         private final TextView sessionListItem_pace;
@@ -42,13 +42,13 @@ public class SessionListAdapter extends RecyclerView.Adapter<SessionListAdapter.
         public SessionListHolder(@NonNull final View itemView) {
             super(itemView);
             // Viewholder items go here
-            sessionListItem_name = itemView.findViewById(R.id.sessionListItem_name);
-            sessionListItem_date = itemView.findViewById(R.id.sessionListItem_date);
+            sessionListItem_name = itemView.findViewById(R.id.session_title);
+            //sessionListItem_date = itemView.findViewById(R.id.session_date);
             //sessionListItem_id = itemView.findViewById(R.id.sessionListItem_id);
-            sessionListItem_time = itemView.findViewById(R.id.sessionListItem_time);
-            sessionListItem_distance = itemView.findViewById(R.id.sessionListItem_distance);
-            sessionListItem_pace = itemView.findViewById(R.id.sessionListItem_pace);
-            sessionListItem_avgSpeed = itemView.findViewById(R.id.sessionListItem_speed);
+            sessionListItem_time = itemView.findViewById(R.id.session_date);
+            sessionListItem_distance = itemView.findViewById(R.id.session_distance);
+            sessionListItem_pace = itemView.findViewById(R.id.session_pace);
+            sessionListItem_avgSpeed = itemView.findViewById(R.id.session_speed);
             itemView.setOnClickListener(this);
 
         }
@@ -75,7 +75,7 @@ public class SessionListAdapter extends RecyclerView.Adapter<SessionListAdapter.
     @Override
     public SessionListHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         // Get session list recycler
-        View itemView = mLayoutInflater.inflate(R.layout.recycler_session_list, viewGroup, false);
+        View itemView = mLayoutInflater.inflate(R.layout.view_session, viewGroup, false);
         return new SessionListHolder(itemView);
     }
 
@@ -108,7 +108,7 @@ public class SessionListAdapter extends RecyclerView.Adapter<SessionListAdapter.
                 String formattedTime = Util.millisToTimeFormat(timeLength,"mm:ss");
                 mViewHolder.sessionListItem_time.setText(formattedTime);
 
-                mViewHolder.sessionListItem_distance.setText(String.format(Locale.getDefault(),"%d",mSessionList.get(i).distance));
+                mViewHolder.sessionListItem_distance.setText(String.format(Locale.getDefault(),"%.1f",mSessionList.get(i).distance));
                 mViewHolder.sessionListItem_pace.setText(String.format(Locale.getDefault(),"%d",mSessionList.get(i).pace));
                 mViewHolder.sessionListItem_avgSpeed.setText(String.format(Locale.getDefault(),"%d",mSessionList.get(i).avgSpeed));
                 //mViewHolder.sessionListItem_id.setText(mSessionList.get(i).id);

@@ -45,7 +45,7 @@ public class IntervalAdapter extends RecyclerView.Adapter<IntervalAdapter.Interv
     @Override
     public IntervalListHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         // Get interval list recycler
-        View itemView = mLayoutInflater.inflate(R.layout.recycler_interval, viewGroup, false);
+        View itemView = mLayoutInflater.inflate(R.layout.view_interval, viewGroup, false);
         return new IntervalListHolder(itemView);
     }
 

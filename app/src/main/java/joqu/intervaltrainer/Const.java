@@ -33,4 +33,9 @@ public interface Const {
     int INTERVAL_TYPE_WALK = 0;
     int INTERVAL_TYPE_COOLDOWN = 3;
     String APP_NAME = "joqu.intervaltrainer";
+    String INTENT_EXTRA_GPS_TOTAL_DIST_FLOAT = "total_distance";
+    int MESSAGE_SESSION_START = 2;
+    int MESSAGE_INTERVAL_START = 3;
+    int MESSAGE_INTERVAL_DONE = 4;
+    int MESSAGE_TICK = 5;
 }

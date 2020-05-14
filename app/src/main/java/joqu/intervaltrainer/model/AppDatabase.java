@@ -77,9 +77,9 @@ public abstract class AppDatabase extends RoomDatabase
                 SessionTemplate templ = new SessionTemplate("Debug Test Session", "Test", "Test");
                 for (int i = 0; i <= 5; i++){
                     if(i%2==0)
-                        templ.addInterval(0, 2000*10 , i);
+                        templ.addInterval(0, 500*10 , i);
                     else
-                        templ.addInterval(1, 2000*10 , i);
+                        templ.addInterval(1, 500*10 , i);
                 }
 
                 templ.saveAll(DB.appDao());

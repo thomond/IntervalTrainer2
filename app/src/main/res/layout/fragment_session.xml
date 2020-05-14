@@ -13,25 +13,8 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/cardView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            app:cardCornerRadius="5dp">
-
-            <TextView
-                android:id="@+id/session_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="10dp"
-                android:textAppearance="@style/TextAppearance.AppCompat.Title" />
-        </androidx.cardview.widget.CardView>
-
         <org.osmdroid.views.MapView
-            android:id="@+id/SavedSession_map"
+            android:id="@+id/Session_map"
             android:layout_width="fill_parent"
             android:layout_height="200dp"
             android:layout_marginStart="8dp"
@@ -43,172 +26,15 @@
 
         </org.osmdroid.views.MapView>
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/cardView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            app:cardCornerRadius="5dp">
-
-            <TableLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="15dp"
-                android:layout_weight="@dimen/cardview_compat_inset_shadow"
-
-                tools:layout_editor_absoluteX="8dp">
-
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                </TableRow>
-
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                    <TextView
-                        android:id="@+id/sessionListItem_date"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:lineSpacingExtra="10sp"
-                        android:padding="5dp"
-                        android:text="Date"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                        android:typeface="normal"
-                        android:visibility="gone" />
-                </TableRow>
-
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-                </TableRow>
-
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:padding="5dp"
-                        android:text="Distance"
-                        android:textAlignment="viewStart"
-                        android:textSize="12sp"
-                        android:textStyle="bold"
-                        />
-
-                    <TextView
-                        android:id="@+id/session_distance"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:minWidth="100dp"
-                        android:padding="5dp"
-                        android:textAlignment="textEnd" />
-
-                    <TextView
-                        android:textAppearance="@style/TabColSubtitle"
-                        android:text="m" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:padding="5dp"
-                        android:text="Total Time"
-                        android:textAlignment="viewStart"
-                        android:textSize="12sp"
-                        android:textStyle="bold"
-                        android:visibility="visible"
-                        />
-
-                    <TextView
-                        android:id="@+id/sessionListItem_time"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:padding="5dp"
-                        android:minWidth="70dp"
-                        android:textAlignment="textEnd" />
-
-                    <TextView
-                        android:textAppearance="@style/TabColSubtitle"
-                        android:text=""
-                        android:visibility="visible"/>
-
-                </TableRow>
-
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:padding="5dp"
-                        android:text="Avg. Speed"
-                        android:textAlignment="viewStart"
-                        android:textSize="12sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/session_speed"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:minWidth="70dp"
-                        android:padding="5dp"
-                        android:textAlignment="textEnd" />
-
-                    <TextView
-                        android:textAppearance="@style/TabColSubtitle"
-                        android:text="m/s" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:padding="5dp"
-                        android:text="Avg. Pace"
-                        android:textAlignment="viewStart"
-
-                        android:textSize="12sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/session_pace"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:minWidth="70dp"
-                        android:padding="5dp"
-                        android:textAlignment="textEnd" />
-
-                    <TextView
-                        android:textAppearance="@style/TabColSubtitle"
-                        android:text="s/m" />
-                </TableRow>
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-
-
-                </TableRow>
-            </TableLayout>
-
-
-        </androidx.cardview.widget.CardView>
+        <include layout="@layout/view_session" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/intervalDataView"
             android:layout_width="match_parent"
-            android:layout_height="300dp"
+            android:layout_height="match_parent"
             tools:layout_editor_absoluteX="7dp"
             tools:layout_editor_absoluteY="361dp"
-            tools:listitem="@layout/recycler_interval_data">
+            tools:listitem="@layout/view_interval_data">
 
         </androidx.recyclerview.widget.RecyclerView>
 
@@ -231,7 +57,7 @@
             tools:layout_conversion_absoluteWidth="395dp"
             tools:layout_editor_absoluteX="24dp"
             tools:layout_editor_absoluteY="8dp"
-            tools:listitem="@layout/recycler_session_list" />
+            tools:listitem="@layout/view_session" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!-- Layout to contain Saved Session info taken from session list-->

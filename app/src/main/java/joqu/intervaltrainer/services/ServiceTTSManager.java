@@ -28,7 +28,7 @@ public class ServiceTTSManager implements TextToSpeech.OnUtteranceCompletedListe
         }
     };
 
-    static boolean isSpeaking(){
+    public static boolean isSpeaking(){
         if(tts==null) return false;
         return tts.isSpeaking();
     }
@@ -45,11 +45,10 @@ public class ServiceTTSManager implements TextToSpeech.OnUtteranceCompletedListe
         try{
             return tts.speak(text, TextToSpeech.QUEUE_ADD, null, utteranceId);
 
-        }catch(NullPointerException e){
-            Log.e(Const.TAG,"tts not initalised"+e.getMessage());
-            return -1;
+        }catch(Exception e){
+            Log.e(Const.TAG,e.getMessage());
         }
-
+        return 0;
     }
 
 

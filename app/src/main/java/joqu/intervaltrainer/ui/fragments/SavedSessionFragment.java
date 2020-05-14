@@ -1,4 +1,5 @@
 package joqu.intervaltrainer.ui.fragments;
+
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
@@ -19,6 +20,7 @@ import org.osmdroid.api.IMapController;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.Polyline;
 
 import java.util.LinkedList;
@@ -69,12 +71,12 @@ public class SavedSessionFragment extends Fragment implements ItemClickListener 
         // SavedSession elements
         sessionTitleText = v.findViewById(R.id.session_title);
         sessionDistanceText = v.findViewById(R.id.session_distance);
-        sessionTimeText = v.findViewById(R.id.sessionListItem_time);
+        sessionTimeText = v.findViewById(R.id.session_time);
         sessionPaceText = v.findViewById(R.id.session_pace);
         sessionSpeedText = v.findViewById(R.id.session_speed);
         intervalDataRecyclerView = v.findViewById(R.id.intervalDataView);
 
-        mMapView = v.findViewById(R.id.SavedSession_map);
+        mMapView = v.findViewById(R.id.Session_map);
 
         showSessionList();
         return v;
@@ -107,6 +109,7 @@ public class SavedSessionFragment extends Fragment implements ItemClickListener 
             // Session information
             Session msess = mViewModel.getSessionById(sessionID);
             List<IntervalData> mIntervalData = mViewModel.getSessionIntervalData(sessionID);
+            boolean first=true;
 
             mMapView.setTileSource(TileSourceFactory.OpenTopo);
             // Center map on location
@@ -116,7 +119,7 @@ public class SavedSessionFragment extends Fragment implements ItemClickListener 
             // Aquire locations from Intervals and add locations data to map
             List<Location> locations = new LinkedList<>();
             mPolyLine = new Polyline(mMapView);
-            mPolyLine.getOutlinePaint().setColor(Color.WHITE);
+            mPolyLine.getOutlinePaint().setColor(Color.BLACK);
 
             for (IntervalData i :
                     mIntervalData) {
@@ -145,19 +148,28 @@ public class SavedSessionFragment extends Fragment implements ItemClickListener 
                    // marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
                    // mMapView.getOverlayManager().add(marker);
                     mapController.setCenter(new GeoPoint(l));
+
                 }
                 mMapView.getOverlayManager().add(intervalPolyLine);
+
             }
 
+            int pntSz = mPolyLine.getPoints().size();
+            Marker marker = new Marker(mMapView) ;
+            marker.setPosition(mPolyLine.getPoints().get(0));
+            marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+            mMapView.getOverlayManager().add(marker);
+            marker.setPosition(mPolyLine.getPoints().get(pntSz-1));
+            marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+            mMapView.getOverlayManager().add(marker);
 
-
-            // Set session elements
+        // Set session elements
             sessionTitleText.setText(msess.title);
 
             long time = Util.millisBetween(msess.started, msess.ended);
 
             sessionTimeText.setText(Util.millisToTimeFormat(time, "mm:ss"));
-            sessionDistanceText.setText(String.format(Locale.getDefault(), "%d", msess.distance));
+            sessionDistanceText.setText(String.format(Locale.getDefault(), "%.1f", msess.distance));
             sessionSpeedText.setText(String.format(Locale.getDefault(), "%d", msess.avgSpeed));
             sessionPaceText.setText(String.format(Locale.getDefault(), "%d", msess.pace));
 

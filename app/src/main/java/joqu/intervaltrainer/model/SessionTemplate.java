@@ -153,4 +153,8 @@ public class SessionTemplate{
         Log.i(TAG, "data read");
         return true;
     }
+
+    public String getName() {
+        return mTemplate.name;
+    }
 }

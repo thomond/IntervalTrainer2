@@ -1,12 +1,13 @@
 package joqu.intervaltrainer.ui.adapters;
 
 import android.content.Context;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.Collections;
 import java.util.List;
@@ -32,9 +33,9 @@ public class TemplateListAdapter extends RecyclerView.Adapter<TemplateListAdapte
         public TemplateListHolder(@NonNull View itemView) {
             super(itemView);
             // Viewholder items go here
-            templateListItem_name = itemView.findViewById(R.id.templateListItem_name);
-            templateListItem_time = itemView.findViewById(R.id.templateListItem_time);
-            templateListItem_distance = itemView.findViewById(R.id.templateListItem_distance);
+            templateListItem_name = itemView.findViewById(R.id.template_name);
+            templateListItem_time = itemView.findViewById(R.id.template_time);
+            templateListItem_distance = itemView.findViewById(R.id.template_distance);
             itemView.setOnClickListener(this);
         }
 
@@ -57,7 +58,7 @@ public class TemplateListAdapter extends RecyclerView.Adapter<TemplateListAdapte
     @Override
     public TemplateListHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         // Get  recycler
-        View itemView = mLayoutInflater.inflate(R.layout.recycler_template_list, viewGroup, false);
+        View itemView = mLayoutInflater.inflate(R.layout.view_template, viewGroup, false);
         return new TemplateListHolder(itemView);
     }
 

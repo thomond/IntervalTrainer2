@@ -59,10 +59,10 @@ public class TemplateFragment extends Fragment implements ItemClickListener, Vie
         mTemplateView = v.findViewById(R.id.templateView);
         mTemplateListView = v.findViewById(R.id.templateListView);
         // Viewholder items go here
-        templateListItem_name = v.findViewById(R.id.templateListItem_name);
-        templateListItem_time = v.findViewById(R.id.templateListItem_time);
-        templateListItem_intervals = v.findViewById(R.id.templateListItem_intervals);
-        templateListItem_distance = v.findViewById(R.id.templateListItem_distance);
+        templateListItem_name = v.findViewById(R.id.template_name);
+        templateListItem_time = v.findViewById(R.id.template_time);
+        templateListItem_intervals = v.findViewById(R.id.template_intervals);
+        templateListItem_distance = v.findViewById(R.id.template_distance);
         template_btnNewSession = v.findViewById(R.id.template_btnNewSession);
         intervalRecyclerView =  v.findViewById(R.id.intervalView);
 

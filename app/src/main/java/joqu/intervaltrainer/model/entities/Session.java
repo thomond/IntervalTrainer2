@@ -35,7 +35,7 @@ public class Session {
     public String data;
     @ColumnInfo(name = "location_data")
     public String locationData;
-    public int distance;
+    public float distance;
     @ColumnInfo(name = "avg_speed")
     public int avgSpeed;
     @ColumnInfo(name = "fastest_speed")
